@@ -82,7 +82,7 @@ const optionData = {
         },
         {
             id: "옵션6",
-            title: "하드웨어 구성_5F 고급형 / 소리방향성시스템 기본 패키지",
+            title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_5F 고급형",
             cost: 16600000, basePrice: 16600000, discountPrice: 13410000,
             desc: `<div class="desc-l1">하드웨어 구성_5F 고급형 / 소리방향성시스템 기본 패키지</div>
 <div class="desc-l2">하드웨어</div>
@@ -99,7 +99,7 @@ const optionData = {
         },
         {
             id: "옵션7",
-            title: "하드웨어 구성_7F 고급형 / 소리방향성시스템 기본 패키지",
+            title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_7F 고급형",
             cost: 20510000, basePrice: 20510000, discountPrice: 16000000,
             desc: `<div class="desc-l1">하드웨어 구성_7F 고급형 / 소리방향성시스템 기본 패키지</div>
 <div class="desc-l2">하드웨어</div>
@@ -118,7 +118,7 @@ const optionData = {
         },
         {
             id: "옵션8",
-            title: "하드웨어 구성_5F 기본형 풀패키지",
+            title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_5F 기본형 풀패키지",
             cost: 12600000, basePrice: 12600000, discountPrice: 9420000,
             desc: `<div class="desc-l1">하드웨어 구성_5F 기본형 풀패키지</div>
 <div class="desc-l2">국제표준 기반 5채널 스피커 프레임 시스템</div>
@@ -130,7 +130,7 @@ const optionData = {
         },
         {
             id: "옵션9",
-            title: "소리방향성시스템 기본 패키지 / 하드웨어 구성_7F 기본형 풀패키지",
+            title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_7F 기본형 풀패키지",
             cost: 14400000, basePrice: 14400000, discountPrice: 10430000,
             desc: `<div class="desc-l1">소리방향성시스템 기본 패키지 / 하드웨어 구성_7F 기본형 풀패키지</div>
 <div class="desc-l2">소프트웨어</div>
@@ -148,7 +148,7 @@ const optionData = {
         },
         {
             id: "옵션10",
-            title: "소리방향성시스템 기본 패키지 / 하드웨어 구성_5F 고급형 풀패키지",
+            title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_5F 고급형 풀패키지",
             cost: 18100000, basePrice: 18100000, discountPrice: 14840000,
             desc: `<div class="desc-l1">소리방향성시스템 기본 패키지 / 하드웨어 구성_5F 고급형 풀패키지</div>
 <div class="desc-l2">Motu UltraLite mk5</div>
