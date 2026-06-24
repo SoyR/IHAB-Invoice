@@ -497,6 +497,18 @@ function generateInvoice() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function printInvoice() {
+    const today = new Date().toISOString().substring(0, 10).replace(/-/g, '');
+    const clientName = document.getElementById('pdfClientName').innerText.trim() || '기관명';
+    const originalTitle = document.title;
+    document.title = `${today}-아이해브견적서-${clientName}`;
+    window.onafterprint = () => {
+        document.title = originalTitle;
+        window.onafterprint = null;
+    };
+    window.print();
+}
+
 function resetSystem() {
     document.getElementById('inputClientName').value = "";
     document.getElementById('inputManagerName').value = "";
