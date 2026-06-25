@@ -815,6 +815,99 @@ textarea.form-input {
     background-color: #fff1f2;
 }
 
+/* 커스텀 옵션 (옵션12) 입력 영역 */
+.custom-price-section {
+    border-top: 1px solid #e8edf3;
+    background-color: #f8fafc;
+}
+.custom-price-inputs {
+    display: flex;
+    border-bottom: 1px solid #e8edf3;
+}
+.price-input-col {
+    flex: 1;
+    padding: 12px 20px;
+    border-right: 1px solid #e8edf3;
+}
+.price-input-col:last-child { border-right: none; }
+.custom-price-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+.custom-price-field {
+    flex: 1;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #202020;
+    outline: none;
+    transition: border-color 0.2s;
+    background-color: #fff;
+}
+.custom-price-field:focus {
+    border-color: #499cdf;
+    box-shadow: 0 0 0 3px rgba(73, 156, 223, 0.12);
+}
+.custom-price-unit {
+    font-size: 13px;
+    color: #64748b;
+    white-space: nowrap;
+}
+.custom-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.custom-field-group:last-child { margin-bottom: 0; }
+.custom-field-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.custom-field-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #202020;
+    outline: none;
+    transition: border-color 0.2s;
+    background-color: #fff;
+}
+.custom-field-input:focus {
+    border-color: #499cdf;
+    box-shadow: 0 0 0 3px rgba(73, 156, 223, 0.12);
+}
+.custom-field-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #202020;
+    outline: none;
+    resize: vertical;
+    line-height: 1.7;
+    transition: border-color 0.2s;
+    background-color: #fff;
+    font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+}
+.custom-field-textarea:focus {
+    border-color: #499cdf;
+    box-shadow: 0 0 0 3px rgba(73, 156, 223, 0.12);
+}
+
 @media print {
     @page {
         size: A4 portrait;

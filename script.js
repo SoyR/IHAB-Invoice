@@ -183,6 +183,13 @@ const optionData = {
 <div class="desc-l3">연결 오디오 케이블</div>
 <div class="desc-l3">멀티탭</div>
 <div class="desc-l2">Motu UltraLite mk5</div>`
+        },
+        {
+            id: "옵션12",
+            title: "",
+            cost: 0, basePrice: 0, discountPrice: 0,
+            isCustom: true,
+            desc: ""
         }
     ],
     hospital: [
@@ -249,62 +256,117 @@ function renderOptions() {
         const sel = selectedOptions.find(o => o.index === index);
         const isSelected = !!sel;
         const price = sel ? sel.price : '';
-
         const qty = sel ? sel.qty : 1;
-
-        let priceSection = '';
-        if (isCenter) {
-            const discPct = Math.round((1 - item.discountPrice / item.basePrice) * 100);
-            priceSection = `
-                <div class="option-price-info">
-                    <div class="price-info-col">
-                        <div class="price-info-label">구성합계</div>
-                        <div class="price-info-value">${item.cost.toLocaleString('ko-KR')} 원</div>
-                    </div>
-                    <div class="price-info-col">
-                        <div class="price-info-label">공개용 기준가</div>
-                        <div class="price-info-value ${applyDiscount ? '' : 'highlight'}">${item.basePrice.toLocaleString('ko-KR')} 원</div>
-                    </div>
-                    <div class="price-info-col">
-                        <div class="price-info-label">안내용 할인가</div>
-                        <div class="price-info-value ${applyDiscount ? 'highlight' : ''}">${item.discountPrice.toLocaleString('ko-KR')} 원${applyDiscount ? ` <span class="price-info-badge">-${discPct}%</span>` : ''}</div>
-                    </div>
-                </div>
-                <div class="option-qty-row ${isSelected ? 'visible' : ''}" id="qty-group-${index}">
-                    <span class="option-qty-label">수량</span>
-                    <input type="number" class="option-qty-input" id="qty-${index}" value="${qty}" min="1" oninput="updateQty(${index})">
-                    <span class="option-qty-unit">개</span>
-                </div>`;
-        } else {
-            priceSection = `
-                <div class="option-price-row ${isSelected ? 'visible' : ''}" id="price-group-${index}">
-                    <span class="option-price-label">단가</span>
-                    <input type="number" class="option-price-input" id="price-${index}" value="${price}" placeholder="금액 입력" oninput="updateOptionPrice(${index})">
-                    <span class="option-price-unit">원</span>
-                    <span class="option-qty-label" style="margin-left:8px;">수량</span>
-                    <input type="number" class="option-qty-input" id="qty-${index}" value="${qty}" min="1" oninput="updateQty(${index})">
-                    <span class="option-qty-unit">개</span>
-                </div>`;
-        }
 
         const card = document.createElement('div');
         card.className = 'option-card' + (isSelected ? ' selected' : '');
         card.id = `opt-card-${index}`;
-        card.innerHTML = `
-            <div class="option-header" onclick="toggleCardSelection(${index})">
-                <div class="option-headline-left">
-                    <input type="checkbox" class="option-checkbox" id="chk-${index}" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleCardSelection(${index})">
-                    <span class="option-number">${item.id}</span>
-                    <span class="option-product-name">${item.title}</span>
+
+        if (item.isCustom) {
+            card.innerHTML = `
+                <div class="option-header" onclick="toggleCardSelection(${index})">
+                    <div class="option-headline-left">
+                        <input type="checkbox" class="option-checkbox" id="chk-${index}" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleCardSelection(${index})">
+                        <span class="option-number">${item.id}</span>
+                        <span class="option-product-name" id="custom-title-display-${index}">${item.title || '커스텀 직접 입력'}</span>
+                    </div>
+                    <button type="button" class="toggle-btn" id="toggle-btn-${index}" onclick="toggleFold(event, ${index})">${isSelected ? '접기' : '펼치기'}</button>
                 </div>
-                <button type="button" class="toggle-btn" id="toggle-btn-${index}" onclick="toggleFold(event, ${index})">펼치기</button>
-            </div>
-            <div class="option-body" id="opt-body-${index}">
-                <div class="composition-title">상세 품목 구성</div>
-                <div class="composition-text">${item.desc}</div>
-            </div>
-            ${priceSection}
-        `;
+                <div class="option-body${isSelected ? ' expanded' : ''}" id="opt-body-${index}">
+                    <div class="composition-title">품목명 및 상세 구성 직접 입력</div>
+                    <div class="custom-field-group">
+                        <label class="custom-field-label">품목명</label>
+                        <input type="text" class="custom-field-input" id="custom-title-${index}"
+                               value="${item.title || ''}" placeholder="예: 소리방향성시스템 맞춤형 패키지"
+                               oninput="updateCustomField(${index})" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-field-group">
+                        <label class="custom-field-label">품목 및 상세 구성</label>
+                        <textarea class="custom-field-textarea" id="custom-desc-${index}"
+                                  placeholder="상세 구성을 입력하세요 (줄바꿈으로 항목 구분)"
+                                  oninput="updateCustomField(${index})" onclick="event.stopPropagation()">${item.desc || ''}</textarea>
+                    </div>
+                </div>
+                <div class="custom-price-section">
+                    <div class="custom-price-inputs">
+                        <div class="price-input-col">
+                            <div class="price-info-label">공개용 기준가</div>
+                            <div class="custom-price-input-wrap">
+                                <input type="number" class="custom-price-field" id="custom-base-${index}"
+                                       value="${item.basePrice || ''}" placeholder="기준가 입력"
+                                       oninput="updateCustomField(${index})" onclick="event.stopPropagation()">
+                                <span class="custom-price-unit">원</span>
+                            </div>
+                        </div>
+                        <div class="price-input-col">
+                            <div class="price-info-label">안내용 할인가</div>
+                            <div class="custom-price-input-wrap">
+                                <input type="number" class="custom-price-field" id="custom-discount-${index}"
+                                       value="${item.discountPrice || ''}" placeholder="할인가 입력"
+                                       oninput="updateCustomField(${index})" onclick="event.stopPropagation()">
+                                <span class="custom-price-unit">원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-qty-row ${isSelected ? 'visible' : ''}" id="qty-group-${index}">
+                        <span class="option-qty-label">수량</span>
+                        <input type="number" class="option-qty-input" id="qty-${index}" value="${qty}" min="1" oninput="updateQty(${index})">
+                        <span class="option-qty-unit">개</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            let priceSection = '';
+            if (isCenter) {
+                const discPct = Math.round((1 - item.discountPrice / item.basePrice) * 100);
+                priceSection = `
+                    <div class="option-price-info">
+                        <div class="price-info-col">
+                            <div class="price-info-label">구성합계</div>
+                            <div class="price-info-value">${item.cost.toLocaleString('ko-KR')} 원</div>
+                        </div>
+                        <div class="price-info-col">
+                            <div class="price-info-label">공개용 기준가</div>
+                            <div class="price-info-value ${applyDiscount ? '' : 'highlight'}">${item.basePrice.toLocaleString('ko-KR')} 원</div>
+                        </div>
+                        <div class="price-info-col">
+                            <div class="price-info-label">안내용 할인가</div>
+                            <div class="price-info-value ${applyDiscount ? 'highlight' : ''}">${item.discountPrice.toLocaleString('ko-KR')} 원${applyDiscount ? ` <span class="price-info-badge">-${discPct}%</span>` : ''}</div>
+                        </div>
+                    </div>
+                    <div class="option-qty-row ${isSelected ? 'visible' : ''}" id="qty-group-${index}">
+                        <span class="option-qty-label">수량</span>
+                        <input type="number" class="option-qty-input" id="qty-${index}" value="${qty}" min="1" oninput="updateQty(${index})">
+                        <span class="option-qty-unit">개</span>
+                    </div>`;
+            } else {
+                priceSection = `
+                    <div class="option-price-row ${isSelected ? 'visible' : ''}" id="price-group-${index}">
+                        <span class="option-price-label">단가</span>
+                        <input type="number" class="option-price-input" id="price-${index}" value="${price}" placeholder="금액 입력" oninput="updateOptionPrice(${index})">
+                        <span class="option-price-unit">원</span>
+                        <span class="option-qty-label" style="margin-left:8px;">수량</span>
+                        <input type="number" class="option-qty-input" id="qty-${index}" value="${qty}" min="1" oninput="updateQty(${index})">
+                        <span class="option-qty-unit">개</span>
+                    </div>`;
+            }
+
+            card.innerHTML = `
+                <div class="option-header" onclick="toggleCardSelection(${index})">
+                    <div class="option-headline-left">
+                        <input type="checkbox" class="option-checkbox" id="chk-${index}" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleCardSelection(${index})">
+                        <span class="option-number">${item.id}</span>
+                        <span class="option-product-name">${item.title}</span>
+                    </div>
+                    <button type="button" class="toggle-btn" id="toggle-btn-${index}" onclick="toggleFold(event, ${index})">펼치기</button>
+                </div>
+                <div class="option-body" id="opt-body-${index}">
+                    <div class="composition-title">상세 품목 구성</div>
+                    <div class="composition-text">${item.desc}</div>
+                </div>
+                ${priceSection}
+            `;
+        }
         container.appendChild(card);
     });
 }
@@ -333,7 +395,17 @@ function toggleCardSelection(index) {
         checkbox.checked = true;
         if (isCenter) {
             document.getElementById(`qty-group-${index}`).classList.add('visible');
-            document.getElementById(`qty-${index}`).focus();
+            if (optionData.center[index]?.isCustom) {
+                const body = document.getElementById(`opt-body-${index}`);
+                const btn = document.getElementById(`toggle-btn-${index}`);
+                if (body && !body.classList.contains('expanded')) {
+                    body.classList.add('expanded');
+                    if (btn) btn.innerText = '접기';
+                }
+                document.getElementById(`custom-title-${index}`)?.focus();
+            } else {
+                document.getElementById(`qty-${index}`).focus();
+            }
         } else {
             document.getElementById(`price-group-${index}`).classList.add('visible');
             document.getElementById(`price-${index}`).focus();
@@ -352,6 +424,29 @@ function toggleFold(event, index) {
     } else {
         body.classList.add('expanded');
         btn.innerText = "접기";
+    }
+}
+
+function updateCustomField(index) {
+    const item = optionData.center[index];
+    const titleVal = document.getElementById(`custom-title-${index}`)?.value || '';
+    const descVal = document.getElementById(`custom-desc-${index}`)?.value || '';
+    const baseVal = parseFloat(document.getElementById(`custom-base-${index}`)?.value) || 0;
+    const discountVal = parseFloat(document.getElementById(`custom-discount-${index}`)?.value) || 0;
+
+    item.title = titleVal;
+    item.desc = descVal;
+    item.basePrice = baseVal;
+    item.discountPrice = discountVal;
+    item.cost = baseVal;
+
+    const display = document.getElementById(`custom-title-display-${index}`);
+    if (display) display.innerText = titleVal || '커스텀 직접 입력';
+
+    const opt = selectedOptions.find(o => o.index === index);
+    if (opt) {
+        opt.price = applyDiscount ? discountVal : baseVal;
+        updateTotalFromOptions();
     }
 }
 
@@ -383,6 +478,9 @@ function syncQtyFromDOM() {
             const priceEl = document.getElementById(`price-${opt.index}`);
             if (priceEl) opt.price = parseFloat(priceEl.value) || 0;
         }
+        if (currentType === 'center' && optionData.center[opt.index]?.isCustom) {
+            updateCustomField(opt.index);
+        }
     });
 }
 
@@ -401,6 +499,14 @@ function validateAndGoStep3() {
         return;
     }
     syncQtyFromDOM();
+    if (currentType === 'center') {
+        const customIdx = optionData.center.findIndex(i => i.isCustom);
+        const hasCustom = selectedOptions.some(o => o.index === customIdx);
+        if (hasCustom && !optionData.center[customIdx].title.trim()) {
+            alert("커스텀 옵션(옵션12)의 품목명을 입력해 주세요.");
+            return;
+        }
+    }
     updateTotalFromOptions();
     goStep(3);
 }
@@ -429,12 +535,17 @@ function buildInvoiceRows() {
             priceCell = `${fmt(unitPrice)} 원`;
         }
 
+        const displayTitle = item.title || (item.isCustom ? '커스텀 옵션' : '');
+        const descHtml = item.isCustom
+            ? item.desc.split('\n').filter(l => l.trim()).map(l => `<div class="desc-l3">${l}</div>`).join('')
+            : item.desc;
+
         return `
             <tr>
                 <td style="font-weight:700; font-size:14px; color:#499cdf;">${item.id}</td>
                 <td>
-                    <div class="table-item-title">${item.title}</div>
-                    <div class="table-item-desc">${item.desc}</div>
+                    <div class="table-item-title">${displayTitle}</div>
+                    <div class="table-item-desc">${descHtml}</div>
                 </td>
                 <td class="text-right" style="font-weight:600; color:#202020;">${qty}개</td>
                 <td class="text-right rate-cell">${priceCell}</td>
@@ -522,6 +633,10 @@ function resetSystem() {
     applyDiscount = false;
     const toggle = document.getElementById('discountToggle');
     if (toggle) toggle.checked = false;
+    const customIdx = optionData.center.findIndex(i => i.isCustom);
+    if (customIdx >= 0) {
+        Object.assign(optionData.center[customIdx], { title: '', desc: '', basePrice: 0, discountPrice: 0, cost: 0 });
+    }
 
     document.getElementById('workspaceContainer').style.display = "block";
     document.getElementById('invoicePreviewWrapper').style.display = "none";
@@ -536,6 +651,16 @@ function getSavedList() {
 function saveInvoice() {
     syncQtyFromDOM();
     const id = currentEditingId || Date.now().toString();
+
+    let customSnapshot = null;
+    if (currentType === 'center') {
+        const customIdx = optionData.center.findIndex(i => i.isCustom);
+        if (customIdx >= 0 && selectedOptions.some(o => o.index === customIdx)) {
+            const ci = optionData.center[customIdx];
+            customSnapshot = { title: ci.title, desc: ci.desc, basePrice: ci.basePrice, discountPrice: ci.discountPrice };
+        }
+    }
+
     const invoice = {
         id,
         invoiceNumber: currentInvoiceNumber,
@@ -543,6 +668,7 @@ function saveInvoice() {
         savedAt: new Date().toISOString(),
         type: currentType,
         selectedOptions: [...selectedOptions],
+        customSnapshot,
         clientName: document.getElementById('inputClientName').value.trim(),
         managerName: document.getElementById('inputManagerName').value.trim(),
         invoiceDate: document.getElementById('inputDate').value,
@@ -583,9 +709,12 @@ function renderSavedList() {
         const grandTotal = totalSupply + Math.floor(totalSupply * 0.1);
         const typeLabel = inv.type === 'center' ? '센터' : '병원';
         const optCount = inv.selectedOptions ? inv.selectedOptions.length : 1;
-        const optLabel = optCount > 1 ? `옵션 ${optCount}개` :
-            inv.selectedOptions ? optionData[inv.type][inv.selectedOptions[0].index].title :
-            optionData[inv.type][inv.selectedOptionIndex].title;
+        const firstOptIdx = inv.selectedOptions ? inv.selectedOptions[0].index : inv.selectedOptionIndex;
+        const firstItem = optionData[inv.type][firstOptIdx];
+        const firstTitle = (firstItem?.isCustom)
+            ? (inv.customSnapshot?.title || '커스텀 옵션')
+            : (firstItem?.title || '');
+        const optLabel = optCount > 1 ? `옵션 ${optCount}개` : firstTitle;
 
         return `
             <div class="saved-item-card">
@@ -612,6 +741,10 @@ function restoreInvoiceState(inv) {
         selectedOptions = inv.selectedOptions.map(o => ({ ...o, qty: o.qty || 1 }));
     } else {
         selectedOptions = [{ index: inv.selectedOptionIndex, price: inv.supplyVal || 0, qty: 1 }];
+    }
+    if (inv.customSnapshot && inv.type === 'center') {
+        const customIdx = optionData.center.findIndex(i => i.isCustom);
+        if (customIdx >= 0) Object.assign(optionData.center[customIdx], inv.customSnapshot);
     }
 }
 
