@@ -348,7 +348,7 @@ body {
 
 /* 견적서 할인가 표시 */
 .rate-base {
-    font-size: 11px;
+    font-size: 13px;
     color: #94a3b8;
     text-decoration: line-through;
     margin-bottom: 2px;
