@@ -23,6 +23,7 @@ const optionData = {
 <div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
 <div class="desc-l2">하드웨어</div>
 <div class="desc-l3">피검사용 검사 터치패드</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
 <div class="desc-l1">하드웨어 구성_5F</div>
 <div class="desc-l2">국제표준 기반 5채널 스피커 프레임 시스템</div>`
         },
@@ -37,6 +38,7 @@ const optionData = {
 <div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
 <div class="desc-l2">하드웨어</div>
 <div class="desc-l3">피검사용 검사 터치패드</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
 <div class="desc-l1">하드웨어 구성_7F</div>
 <div class="desc-l2">국제표준 기반 7채널 스피커 프레임 시스템</div>`
         },
@@ -51,6 +53,7 @@ const optionData = {
 <div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
 <div class="desc-l2">하드웨어</div>
 <div class="desc-l3">피검사용 검사 터치패드</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
 <div class="desc-l1">하드웨어 구성_5F 기본형</div>
 <div class="desc-l2">국제표준 기반 5채널 스피커 프레임 시스템</div>
 <div class="desc-l2">[검사용 스피커_기본형] FLUID AUDIO FX50 V2 × 5</div>
@@ -67,60 +70,67 @@ const optionData = {
 <div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
 <div class="desc-l3">시스템 설치 및 최적화 구축</div>
 <div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
-<div class="desc-l1">하드웨어 구성_7F 기본형</div>
 <div class="desc-l2">하드웨어</div>
 <div class="desc-l3">피검사용 검사 터치패드</div>
-<div class="desc-l3">국제표준 기반 7채널 스피커 프레임 시스템</div>
-<div class="desc-l3">[검사용 스피커_기본형] FLUID AUDIO FX50 V2 × 7</div>
-<div class="desc-l4">전원선 세트</div>
-<div class="desc-l4">연결 오디오 케이블</div>
-<div class="desc-l4">멀티탭</div>
-<div class="desc-l2">소프트웨어</div>
-<div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
-<div class="desc-l3">시스템 설치 및 최적화 구축</div>
-<div class="desc-l3">초기 성능 검증 및 시스템 점검</div>`
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
+<div class="desc-l1">하드웨어 구성_7F 기본형</div>
+<div class="desc-l2">국제표준 기반 7채널 스피커 프레임 시스템</div>
+<div class="desc-l2">[검사용 스피커_기본형] FLUID AUDIO FX50 V2 × 7</div>
+<div class="desc-l3">전원선 세트</div>
+<div class="desc-l3">연결 오디오 케이블</div>
+<div class="desc-l3">멀티탭</div>`
         },
         {
             id: "옵션6",
             title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_5F 고급형",
             cost: 16600000, basePrice: 16600000, discountPrice: 13410000,
-            desc: `<div class="desc-l1">하드웨어 구성_5F 고급형 / 소리방향성시스템 기본 패키지</div>
-<div class="desc-l2">하드웨어</div>
-<div class="desc-l3">피검사용 검사 터치패드</div>
-<div class="desc-l2">국제표준 기반 5채널 스피커 프레임 시스템</div>
-<div class="desc-l2">[검사용 스피커_고급형] GENELEC 8010A × 5</div>
-<div class="desc-l3">전원선 세트</div>
-<div class="desc-l3">연결 오디오 케이블</div>
-<div class="desc-l3">멀티탭</div>
-<div class="desc-l2">소프트웨어</div>
-<div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
-<div class="desc-l3">시스템 설치 및 최적화 구축</div>
-<div class="desc-l3">초기 성능 검증 및 시스템 점검</div>`
-        },
-        {
-            id: "옵션7",
-            title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_7F 고급형",
-            cost: 20510000, basePrice: 20510000, discountPrice: 16000000,
-            desc: `<div class="desc-l1">하드웨어 구성_7F 고급형 / 소리방향성시스템 기본 패키지</div>
-<div class="desc-l2">하드웨어</div>
-<div class="desc-l3">피검사용 검사 터치패드</div>
-<div class="desc-l2">국제표준 기반 7채널 스피커 프레임 시스템</div>
-<div class="desc-l2">[검사용 스피커_고급형] GENELEC 8010A × 7</div>
-<div class="desc-l3">전원선 세트</div>
-<div class="desc-l3">연결 오디오 케이블</div>
-<div class="desc-l3">멀티탭</div>
+            desc: `<div class="desc-l1">소리방향성시스템 기본 패키지</div>
 <div class="desc-l2">소프트웨어</div>
 <div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
 <div class="desc-l3">시스템 설치 및 최적화 구축</div>
 <div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
 <div class="desc-l2">하드웨어</div>
-<div class="desc-l3">피검사용 검사 터치패드</div>`
+<div class="desc-l3">피검사용 검사 터치패드</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
+<div class="desc-l1">하드웨어 구성_5F 고급형</div>
+<div class="desc-l2">국제표준 기반 5채널 스피커 프레임 시스템</div>
+<div class="desc-l2">[검사용 스피커_고급형] GENELEC 8010A × 5</div>
+<div class="desc-l3">전원선 세트</div>
+<div class="desc-l3">연결 오디오 케이블</div>
+<div class="desc-l3">멀티탭</div>`
+        },
+        {
+            id: "옵션7",
+            title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_7F 고급형",
+            cost: 20510000, basePrice: 20510000, discountPrice: 16000000,
+            desc: `<div class="desc-l1">소리방향성시스템 기본 패키지</div>
+<div class="desc-l2">소프트웨어</div>
+<div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
+<div class="desc-l3">시스템 설치 및 최적화 구축</div>
+<div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
+<div class="desc-l2">하드웨어</div>
+<div class="desc-l3">피검사용 검사 터치패드</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
+<div class="desc-l1">하드웨어 구성_7F 고급형</div>
+<div class="desc-l2">국제표준 기반 7채널 스피커 프레임 시스템</div>
+<div class="desc-l2">[검사용 스피커_고급형] GENELEC 8010A × 7</div>
+<div class="desc-l3">전원선 세트</div>
+<div class="desc-l3">연결 오디오 케이블</div>
+<div class="desc-l3">멀티탭</div>`
         },
         {
             id: "옵션8",
             title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_5F 기본형 풀패키지",
             cost: 12600000, basePrice: 12600000, discountPrice: 9420000,
-            desc: `<div class="desc-l1">하드웨어 구성_5F 기본형 풀패키지</div>
+            desc: `<div class="desc-l1">소리방향성시스템 기본 패키지</div>
+<div class="desc-l2">소프트웨어</div>
+<div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
+<div class="desc-l3">시스템 설치 및 최적화 구축</div>
+<div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
+<div class="desc-l2">하드웨어</div>
+<div class="desc-l3">피검사용 검사 터치패드</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
+<div class="desc-l1">하드웨어 구성_5F 기본형 풀패키지</div>
 <div class="desc-l2">국제표준 기반 5채널 스피커 프레임 시스템</div>
 <div class="desc-l2">[검사용 스피커_기본형] FLUID AUDIO FX50 V2 × 5</div>
 <div class="desc-l3">전원선 세트</div>
@@ -132,37 +142,40 @@ const optionData = {
             id: "옵션9",
             title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_7F 기본형 풀패키지",
             cost: 14400000, basePrice: 14400000, discountPrice: 10430000,
-            desc: `<div class="desc-l1">소리방향성시스템 기본 패키지 / 하드웨어 구성_7F 기본형 풀패키지</div>
+            desc: `<div class="desc-l1">소리방향성시스템 기본 패키지</div>
 <div class="desc-l2">소프트웨어</div>
 <div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
 <div class="desc-l3">시스템 설치 및 최적화 구축</div>
 <div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
 <div class="desc-l2">하드웨어</div>
 <div class="desc-l3">피검사용 검사 터치패드</div>
-<div class="desc-l3">국제표준 기반 7채널 스피커 프레임 시스템</div>
-<div class="desc-l3">[검사용 스피커_기본형] FLUID AUDIO FX50 V2 × 7</div>
-<div class="desc-l4">전원선 세트</div>
-<div class="desc-l4">연결 오디오 케이블</div>
-<div class="desc-l4">멀티탭</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
+<div class="desc-l1">하드웨어 구성_7F 기본형 풀패키지</div>
+<div class="desc-l2">국제표준 기반 7채널 스피커 프레임 시스템</div>
+<div class="desc-l2">[검사용 스피커_기본형] FLUID AUDIO FX50 V2 × 7</div>
+<div class="desc-l3">전원선 세트</div>
+<div class="desc-l3">연결 오디오 케이블</div>
+<div class="desc-l3">멀티탭</div>
 <div class="desc-l2">Motu UltraLite mk5</div>`
         },
         {
             id: "옵션10",
             title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_5F 고급형 풀패키지",
             cost: 18100000, basePrice: 18100000, discountPrice: 14840000,
-            desc: `<div class="desc-l1">소리방향성시스템 기본 패키지 / 하드웨어 구성_5F 고급형 풀패키지</div>
-<div class="desc-l2">Motu UltraLite mk5</div>
+            desc: `<div class="desc-l1">소리방향성시스템 기본 패키지</div>
 <div class="desc-l2">소프트웨어</div>
 <div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
 <div class="desc-l3">시스템 설치 및 최적화 구축</div>
 <div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
 <div class="desc-l2">하드웨어</div>
 <div class="desc-l3">피검사용 검사 터치패드</div>
-<div class="desc-l3">국제표준 기반 5채널 스피커 프레임 시스템</div>
-<div class="desc-l3">[검사용 스피커_고급형] GENELEC 8010A × 5</div>
-<div class="desc-l4">전원선 세트</div>
-<div class="desc-l4">연결 오디오 케이블</div>
-<div class="desc-l4">멀티탭</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
+<div class="desc-l1">하드웨어 구성_5F 고급형 풀패키지</div>
+<div class="desc-l2">국제표준 기반 5채널 스피커 프레임 시스템</div>
+<div class="desc-l2">[검사용 스피커_고급형] GENELEC 8010A × 5</div>
+<div class="desc-l3">전원선 세트</div>
+<div class="desc-l3">연결 오디오 케이블</div>
+<div class="desc-l3">멀티탭</div>
 <div class="desc-l2">Motu UltraLite mk5</div>`
         },
         {
@@ -176,6 +189,7 @@ const optionData = {
 <div class="desc-l3">초기 성능 검증 및 시스템 점검</div>
 <div class="desc-l2">하드웨어</div>
 <div class="desc-l3">피검사용 검사 터치패드</div>
+<div class="desc-l3">피검자용 맞춤 제작 의자 &amp; 거치대 세트</div>
 <div class="desc-l1">하드웨어 구성_7F 고급형 풀패키지</div>
 <div class="desc-l2">국제표준 기반 7채널 스피커 프레임 시스템</div>
 <div class="desc-l2">[검사용 스피커_고급형] GENELEC 8010A × 7</div>
@@ -596,7 +610,7 @@ function buildInvoiceRows() {
 
         return `
             <tr>
-                <td style="font-weight:700; font-size:14px; color:#499cdf;">${item.id}</td>
+                <td style="font-weight:700; font-size:14px; color:#499cdf;">${item.id.replace('옵션', '')}</td>
                 <td>
                     <div class="table-item-title">${displayTitle}</div>
                     <div class="table-item-desc">${descHtml}</div>
