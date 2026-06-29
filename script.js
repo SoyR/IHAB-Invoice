@@ -318,20 +318,17 @@ function renderOptions() {
         } else {
             let priceSection = '';
             if (isCenter) {
-                const discPct = Math.round((1 - item.discountPrice / item.basePrice) * 100);
+                const discPct = (item.basePrice > 0 && item.discountPrice < item.basePrice)
+                    ? Math.round((1 - item.discountPrice / item.basePrice) * 100) : 0;
                 priceSection = `
                     <div class="option-price-info">
                         <div class="price-info-col">
-                            <div class="price-info-label">구성합계</div>
-                            <div class="price-info-value">${item.cost.toLocaleString('ko-KR')} 원</div>
-                        </div>
-                        <div class="price-info-col">
                             <div class="price-info-label">공개용 기준가</div>
-                            <div class="price-info-value ${applyDiscount ? '' : 'highlight'}">${item.basePrice.toLocaleString('ko-KR')} 원</div>
+                            <div class="price-info-value ${applyDiscount ? '' : 'highlight'}" id="price-display-base-${index}">${item.basePrice.toLocaleString('ko-KR')} 원</div>
                         </div>
                         <div class="price-info-col">
                             <div class="price-info-label">안내용 할인가</div>
-                            <div class="price-info-value ${applyDiscount ? 'highlight' : ''}">${item.discountPrice.toLocaleString('ko-KR')} 원${applyDiscount ? ` <span class="price-info-badge">-${discPct}%</span>` : ''}</div>
+                            <div class="price-info-value ${applyDiscount ? 'highlight' : ''}" id="price-display-discount-${index}">${item.discountPrice.toLocaleString('ko-KR')} 원${applyDiscount && discPct > 0 ? ` <span class="price-info-badge">-${discPct}%</span>` : ''}</div>
                         </div>
                     </div>
                     <div class="option-qty-row ${isSelected ? 'visible' : ''}" id="qty-group-${index}">
@@ -351,6 +348,9 @@ function renderOptions() {
                     </div>`;
             }
 
+            const initDiscPct = (item.basePrice > 0 && item.discountPrice < item.basePrice)
+                ? Math.round((1 - item.discountPrice / item.basePrice) * 100) : 0;
+
             card.innerHTML = `
                 <div class="option-header" onclick="toggleCardSelection(${index})">
                     <div class="option-headline-left">
@@ -363,6 +363,23 @@ function renderOptions() {
                 <div class="option-body" id="opt-body-${index}">
                     <div class="composition-title">상세 품목 구성</div>
                     <div class="composition-text">${item.desc}</div>
+                    <div class="composition-title" style="margin-top:20px; padding-top:16px; border-top:1px dashed #e2e8f0;">가격 수정</div>
+                    <div style="display:flex; border:1px solid #e8edf3; border-radius:6px; overflow:hidden; margin-top:6px;">
+                        <div class="price-input-col">
+                            <div class="price-info-label">공개용 기준가</div>
+                            <div class="custom-price-input-wrap">
+                                <input type="number" class="custom-price-field" id="edit-base-${index}" value="${item.basePrice}" placeholder="기준가 입력" oninput="updateOptionPriceField(${index})" onclick="event.stopPropagation()">
+                                <span class="custom-price-unit">원</span>
+                            </div>
+                        </div>
+                        <div class="price-input-col">
+                            <div class="price-info-label">안내용 할인가 <span class="rate-badge" id="edit-disc-badge-${index}" style="display:${initDiscPct > 0 ? 'inline-block' : 'none'};">${initDiscPct > 0 ? `-${initDiscPct}%` : ''}</span></div>
+                            <div class="custom-price-input-wrap">
+                                <input type="number" class="custom-price-field" id="edit-discount-${index}" value="${item.discountPrice}" placeholder="할인가 입력" oninput="updateOptionPriceField(${index})" onclick="event.stopPropagation()">
+                                <span class="custom-price-unit">원</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 ${priceSection}
             `;
@@ -442,6 +459,43 @@ function updateCustomField(index) {
 
     const display = document.getElementById(`custom-title-display-${index}`);
     if (display) display.innerText = titleVal || '커스텀 직접 입력';
+
+    const opt = selectedOptions.find(o => o.index === index);
+    if (opt) {
+        opt.price = applyDiscount ? discountVal : baseVal;
+        updateTotalFromOptions();
+    }
+}
+
+function updateOptionPriceField(index) {
+    const item = optionData.center[index];
+    const baseVal = Math.round(parseFloat(document.getElementById(`edit-base-${index}`)?.value) || 0);
+    const discountVal = Math.round(parseFloat(document.getElementById(`edit-discount-${index}`)?.value) || 0);
+
+    item.basePrice = baseVal;
+    item.discountPrice = discountVal;
+    item.cost = baseVal;
+
+    const discPct = (baseVal > 0 && discountVal < baseVal)
+        ? Math.round((1 - discountVal / baseVal) * 100) : 0;
+
+    const badge = document.getElementById(`edit-disc-badge-${index}`);
+    if (badge) {
+        badge.style.display = discPct > 0 ? 'inline-block' : 'none';
+        badge.innerText = discPct > 0 ? `-${discPct}%` : '';
+    }
+
+    const basePriceDisplay = document.getElementById(`price-display-base-${index}`);
+    const discountPriceDisplay = document.getElementById(`price-display-discount-${index}`);
+    if (basePriceDisplay) {
+        basePriceDisplay.className = `price-info-value ${applyDiscount ? '' : 'highlight'}`;
+        basePriceDisplay.innerText = baseVal.toLocaleString('ko-KR') + ' 원';
+    }
+    if (discountPriceDisplay) {
+        discountPriceDisplay.className = `price-info-value ${applyDiscount ? 'highlight' : ''}`;
+        discountPriceDisplay.innerHTML = discountVal.toLocaleString('ko-KR') + ' 원' +
+            (applyDiscount && discPct > 0 ? ` <span class="price-info-badge">-${discPct}%</span>` : '');
+    }
 
     const opt = selectedOptions.find(o => o.index === index);
     if (opt) {
@@ -815,3 +869,10 @@ function editInvoice(id) {
 }
 
 renderSavedList();
+
+// 스크롤 휠로 number input 값이 변경되는 브라우저 기본 동작 방지
+document.addEventListener('wheel', function () {
+    if (document.activeElement.type === 'number') {
+        document.activeElement.blur();
+    }
+}, { capture: true, passive: true });
