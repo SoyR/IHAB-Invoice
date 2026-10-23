@@ -217,7 +217,11 @@ const optionData = {
 // 수출은 센터 패키지(옵션1~11) 복사본 + 수출 전용 단품 + 커스텀 옵션
 // directPrice: 기본 가격 없이 직접 입력하는 품목
 optionData.export = [
-    ...optionData.center.filter(i => !i.isCustom).map(i => ({ ...i })),
+    // 수출 패키지에는 상세 구성 끝에 Laptop computer 포함 (Motu UltraLite mk5 와 같은 desc-l2 레벨)
+    ...optionData.center.filter(i => !i.isCustom).map(i => ({
+        ...i,
+        desc: i.desc + '\n<div class="desc-l2">Laptop computer</div>'
+    })),
     { id: "옵션12", title: "Laptop computer", cost: 0, basePrice: 0, discountPrice: 0, directPrice: true, desc: "" },
     { id: "옵션13", title: "Sound Localization Testing Chair", cost: 0, basePrice: 0, discountPrice: 0, directPrice: true, desc: "" },
     { id: "옵션14", title: "", cost: 0, basePrice: 0, discountPrice: 0, isCustom: true, desc: "" }
@@ -1179,7 +1183,10 @@ function saveSessionState() {
         currentEditingId, currentInvoiceNumber,
         // Step 2 에서 수정한 가격/커스텀 입력 보존
         items: currentType
-            ? optionData[currentType].map(i => ({ title: i.title, desc: i.desc, basePrice: i.basePrice, discountPrice: i.discountPrice, cost: i.cost }))
+            ? optionData[currentType].map(i => {
+                const prices = { basePrice: i.basePrice, discountPrice: i.discountPrice, cost: i.cost };
+                return i.isCustom ? { ...prices, title: i.title, desc: i.desc } : prices;
+            })
             : null,
         form: Object.fromEntries(sessionFormFields.map(id => [id, document.getElementById(id).value]))
     };
@@ -1192,7 +1199,13 @@ function restoreSessionState() {
     if (!state || !state.currentType || state.view === 'step1') return;
 
     ({ currentType, selectedOptions, applyDiscount, docLang, docType, docCurrency, currentEditingId, currentInvoiceNumber } = state);
-    if (state.items) state.items.forEach((saved, i) => Object.assign(optionData[currentType][i], saved));
+    // 품목명/구성은 코드의 최신 값 유지, 가격만 복원 (커스텀 옵션은 입력 내용까지 복원)
+    if (state.items) state.items.forEach((saved, i) => {
+        const item = optionData[currentType][i];
+        if (!item) return;
+        const { basePrice, discountPrice, cost, title, desc } = saved;
+        Object.assign(item, { basePrice, discountPrice, cost }, item.isCustom ? { title: title || '', desc: desc || '' } : {});
+    });
     sessionFormFields.forEach(id => { document.getElementById(id).value = state.form[id] || ''; });
 
     document.getElementById('discountToggle').checked = applyDiscount;
