@@ -214,17 +214,190 @@ const optionData = {
     ]
 };
 
+// 수출은 센터 패키지(옵션1~11) 복사본 + 수출 전용 단품 + 커스텀 옵션
+// directPrice: 기본 가격 없이 직접 입력하는 품목
+optionData.export = [
+    ...optionData.center.filter(i => !i.isCustom).map(i => ({ ...i })),
+    { id: "옵션12", title: "Laptop computer", cost: 0, basePrice: 0, discountPrice: 0, directPrice: true, desc: "" },
+    { id: "옵션13", title: "Sound Localization Testing Chair", cost: 0, basePrice: 0, discountPrice: 0, directPrice: true, desc: "" },
+    { id: "옵션14", title: "", cost: 0, basePrice: 0, discountPrice: 0, isCustom: true, desc: "" }
+];
+const typeLabels = { center: '센터', hospital: '병원', export: '수출' };
+function hasCenterOptions(type) { return type === 'center' || type === 'export'; }
+
+// 수출용 고정 비고 (청구서는 견적 유효기간 문구 제외)
+const exportTerms = {
+    validity: 'This quotation is valid for 30 days from the date of issue.',
+    payment: 'Payment Terms: Payment is due within 30 days after delivery.',
+    trade: 'Trade Terms: All import duties, customs clearance fees, taxes, and any other charges levied in the destination country shall be borne by the Buyer.'
+};
+
+function getExportRemarks() {
+    const lines = docType === 'invoice'
+        ? [exportTerms.payment, exportTerms.trade]
+        : [exportTerms.validity, exportTerms.payment, exportTerms.trade];
+    return lines.map((line, i) => `${i + 1}. ${line}`).join('\n');
+}
+
+// 견적서 문서 다국어 문구 (입력 화면은 한글 고정, 생성 문서에만 적용)
+const invoiceText = {
+    ko: {
+        brand: '소리방향성시스템 견적서',
+        companyName: '(주)아이해브',
+        address: '<span class="company-info-label">주소 :</span> 경기 안양시 동안구 흥안대로 457-25 605호',
+        phone: '<span class="company-info-label">전화번호 :</span> 031-496-8330',
+        cell: '',
+        email: '<span class="company-info-label">이메일 :</span> support@ihab.co.kr',
+        recipient: '견적 수신처',
+        numberKey: '견적 번호:',
+        dateKey: '견적 일자:',
+        validityKey: '유효 기한:',
+        validityVal: '발급일로부터 30일',
+        thCode: '코드',
+        thItem: '품목명 및 상세 구성',
+        thQty: '수량',
+        thUnit: '단가 (공급가액)',
+        thAmount: '합계금액 (VAT 포함)',
+        remarksTitle: '비고 및 특이사항',
+        bankTitle: '입금 계좌 안내',
+        dueTitle: '지급 기한',
+        totalTitle: '총 견적 금액 (합계)',
+        bankInfo: '신한은행 140-014-875639<br>예금주: (주)아이해브',
+        thanks: '귀사의 무궁한 발전을 기원합니다. 감사합니다.',
+        sealLabel: '(주)아이해브 대표이사',
+        manager: '담당자:',
+        managerDefault: '귀하',
+        qtyUnit: '개',
+        summary: '합 계',
+        customTitle: '커스텀 옵션',
+        defaultRemarks: '특이사항 없음. 본 견적서의 유효기간은 발행일로부터 30일입니다.',
+        fileLabel: '아이해브견적서'
+    },
+    en: {
+        companyName: 'IHAB Co., Ltd.',
+        address: '<span class="company-info-label">Address :</span> #605, 457-25 Heungan-daero, Dongan-gu,<br>Anyang-si, Gyeonggi-do, Republic of Korea',
+        phone: '<span class="company-info-label">Tel :</span> +82-31-496-8330',
+        cell: '<span class="company-info-label">Cell :</span> +82-10-9057-5425',
+        email: '<span class="company-info-label">Email :</span> support@ihab.co.kr',
+        thCode: 'Code',
+        thItem: 'Item &amp; Description',
+        thQty: 'Qty',
+        thUnit: 'Unit Price',
+        thAmount: 'Amount',
+        remarksTitle: 'Remarks',
+        bankTitle: 'Bank Details',
+        bankInfo: 'Shinhan Bank / Account No. 140-014-875639<br>SWIFT: SHBKKRSE<br>Beneficiary: IHAB Co., Ltd.<br>Bank Address: 20, Sejong-Daero 9-Gil, Jung-Gu, Seoul, South Korea (Zip code: 04513)',
+        thanks: 'Thank you for your business.',
+        sealLabel: 'IHAB Co., Ltd. CEO',
+        manager: 'Attn:',
+        managerDefault: '-',
+        qtyUnit: '',
+        summary: 'TOTAL',
+        customTitle: 'Custom Option',
+        dueVal: 'Within 30 days after delivery'
+    },
+    quotation: {
+        brand: 'Sound Localization System',
+        recipient: 'Quotation To',
+        numberKey: 'Quotation No.:',
+        dateKey: 'Quotation Date:',
+        validityKey: 'Valid For:',
+        validityVal: '30 days from the date of issue',
+        dueTitle: 'Payment Due',
+        totalTitle: 'Total Quotation Amount',
+        fileLabel: 'IHAB-Quotation'
+    },
+    invoice: {
+        brand: 'Sound Localization System',
+        recipient: 'Bill To',
+        numberKey: 'Invoice No.:',
+        dateKey: 'Invoice Date:',
+        validityKey: 'Payment Terms:',
+        validityVal: 'Within 30 days after delivery',
+        dueTitle: 'Due Date',
+        totalTitle: 'Total Amount Due',
+        fileLabel: 'IHAB-Invoice'
+    }
+};
+
+// 품목명/상세 구성 영문 변환 (긴 문구 우선 치환)
+const itemPhraseEn = [
+    [/소리방향성시스템 소프트웨어 라이선스\(5년\)/g, 'Sound Localization System Software License (5 years)'],
+    [/소리방향성시스템 기본 패키지/g, 'Sound Localization System Basic Package'],
+    [/시스템 설치 및 최적화 구축/g, 'System Installation &amp; Optimization'],
+    [/초기 성능 검증 및 시스템 점검/g, 'Initial Performance Verification &amp; System Inspection'],
+    [/피검사용 검사 터치패드/g, 'Touchpad for Examinee Testing'],
+    [/피검자용 맞춤 제작 의자 &amp; 거치대 세트/g, 'Custom-made Examinee Chair &amp; Stand Set'],
+    [/국제표준 기반 (\d+)채널 스피커 프레임 시스템/g, 'International Standard-based $1-Channel Speaker Frame System'],
+    [/검사용 스피커/g, 'Test Speaker'],
+    [/전원선 세트/g, 'Power Cable Set'],
+    [/연결 오디오 케이블/g, 'Audio Connection Cables'],
+    [/멀티탭/g, 'Power Strip'],
+    [/하드웨어 구성/g, 'Hardware Configuration'],
+    [/하드웨어/g, 'Hardware'],
+    [/소프트웨어/g, 'Software'],
+    [/풀패키지/g, 'Full Package'],
+    [/고급형/g, 'Premium'],
+    [/기본형/g, 'Standard']
+];
+
+function translateItemText(text) {
+    if (docLang !== 'en') return text;
+    return itemPhraseEn.reduce((s, [pattern, en]) => s.replace(pattern, en), text);
+}
+
 let currentType = "";
 let selectedOptions = [];
 let currentEditingId = null;
 let currentInvoiceNumber = null;
 let applyDiscount = false;
+let docLang = 'ko';            // 'ko' | 'en' (수출 구분일 때 'en')
+let docType = 'quotation';     // 'quotation' | 'invoice' (영문 전용)
+let docCurrency = 'KRW';       // 'KRW' | 'USD' (영문 전용)
+
+function getInvoiceText() {
+    return docLang === 'en'
+        ? { ...invoiceText.en, ...invoiceText[docType] }
+        : invoiceText.ko;
+}
+
+function isUSD() { return docLang === 'en' && docCurrency === 'USD'; }
+// 수출(영문) 문서는 VAT 없음
+function isExport() { return docLang === 'en'; }
+function round2(n) { return Math.round(n * 100) / 100; }
+
+// USD 문서는 품목별로 직접 입력한 opt.usdPrice 사용
+function unitPriceOf(opt, usd) {
+    return usd ? (opt.usdPrice || 0) : (opt.price || 0);
+}
+// USD 는 달러 정수 단위로 계산 (VAT 는 1달러 단위 반올림), vatFree 면 세액 0
+function taxOf(supply, usd, vatFree) {
+    if (vatFree) return 0;
+    return usd ? Math.round(supply * 0.1) : Math.floor(supply * 0.1);
+}
+function supplyOf(opts, usd) {
+    const sum = opts.reduce((s, o) => s + unitPriceOf(o, usd) * (o.qty || 1), 0);
+    return usd ? round2(sum) : sum;
+}
+
+function fmtMoney(n) {
+    if (docLang === 'ko') return `${fmt(n)} 원`;
+    if (docCurrency === 'USD') return `USD ${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+    return `KRW ${n.toLocaleString('en-US')}`;
+}
+
+function formatDocDate(dateObj) {
+    if (docLang === 'en') {
+        return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    return `${dateObj.getFullYear()}년 ${dateObj.getMonth()+1}월 ${dateObj.getDate()}일`;
+}
 
 function toggleDiscount() {
     applyDiscount = document.getElementById('discountToggle').checked;
-    if (currentType === 'center') {
+    if (hasCenterOptions(currentType)) {
         selectedOptions.forEach(opt => {
-            const item = optionData.center[opt.index];
+            const item = optionData[currentType][opt.index];
             opt.price = applyDiscount ? item.discountPrice : item.basePrice;
         });
     }
@@ -252,10 +425,14 @@ function selectType(type) {
     currentType = type;
     selectedOptions = [];
     applyDiscount = false;
+    // 수출은 영문 문서(기본 USD), 센터/병원은 한글 문서
+    docLang = type === 'export' ? 'en' : 'ko';
+    docType = 'quotation';
+    docCurrency = type === 'export' ? 'USD' : 'KRW';
+    syncDocSettingsUI();
     const toggle = document.getElementById('discountToggle');
     if (toggle) toggle.checked = false;
-    document.getElementById('typeTitleText').innerText =
-        type === 'center' ? '견적구성 _ 센터 옵션 선택' : '견적구성 _ 병원 옵션 선택';
+    document.getElementById('typeTitleText').innerText = `견적구성 _ ${typeLabels[type]} 옵션 선택`;
     renderOptions();
     goStep(2);
 }
@@ -264,7 +441,7 @@ function renderOptions() {
     const container = document.getElementById('optionsContainer');
     container.innerHTML = "";
     const items = optionData[currentType];
-    const isCenter = currentType === 'center';
+    const isCenter = hasCenterOptions(currentType);
 
     items.forEach((item, index) => {
         const sel = selectedOptions.find(o => o.index === index);
@@ -334,15 +511,16 @@ function renderOptions() {
             if (isCenter) {
                 const discPct = (item.basePrice > 0 && item.discountPrice < item.basePrice)
                     ? Math.round((1 - item.discountPrice / item.basePrice) * 100) : 0;
+                const priceText = n => (item.directPrice && !n) ? '직접 입력' : `${n.toLocaleString('ko-KR')} 원`;
                 priceSection = `
                     <div class="option-price-info">
                         <div class="price-info-col">
                             <div class="price-info-label">공개용 기준가</div>
-                            <div class="price-info-value ${applyDiscount ? '' : 'highlight'}" id="price-display-base-${index}">${item.basePrice.toLocaleString('ko-KR')} 원</div>
+                            <div class="price-info-value ${applyDiscount ? '' : 'highlight'}" id="price-display-base-${index}">${priceText(item.basePrice)}</div>
                         </div>
                         <div class="price-info-col">
                             <div class="price-info-label">안내용 할인가</div>
-                            <div class="price-info-value ${applyDiscount ? 'highlight' : ''}" id="price-display-discount-${index}">${item.discountPrice.toLocaleString('ko-KR')} 원${applyDiscount && discPct > 0 ? ` <span class="price-info-badge">-${discPct}%</span>` : ''}</div>
+                            <div class="price-info-value ${applyDiscount ? 'highlight' : ''}" id="price-display-discount-${index}">${priceText(item.discountPrice)}${applyDiscount && discPct > 0 ? ` <span class="price-info-badge">-${discPct}%</span>` : ''}</div>
                         </div>
                     </div>
                     <div class="option-qty-row ${isSelected ? 'visible' : ''}" id="qty-group-${index}">
@@ -405,7 +583,7 @@ function renderOptions() {
 function toggleCardSelection(index) {
     const checkbox = document.getElementById(`chk-${index}`);
     const card = document.getElementById(`opt-card-${index}`);
-    const isCenter = currentType === 'center';
+    const isCenter = hasCenterOptions(currentType);
     const existingIdx = selectedOptions.findIndex(o => o.index === index);
 
     if (existingIdx >= 0) {
@@ -418,7 +596,7 @@ function toggleCardSelection(index) {
             document.getElementById(`price-group-${index}`).classList.remove('visible');
         }
     } else {
-        const price = isCenter ? (applyDiscount ? optionData.center[index].discountPrice : optionData.center[index].basePrice) : 0;
+        const price = isCenter ? (applyDiscount ? optionData[currentType][index].discountPrice : optionData[currentType][index].basePrice) : 0;
         const qtyEl = document.getElementById(`qty-${index}`);
         const initQty = qtyEl ? Math.max(1, parseInt(qtyEl.value) || 1) : 1;
         selectedOptions.push({ index, price, qty: initQty });
@@ -426,7 +604,7 @@ function toggleCardSelection(index) {
         checkbox.checked = true;
         if (isCenter) {
             document.getElementById(`qty-group-${index}`).classList.add('visible');
-            if (optionData.center[index]?.isCustom) {
+            if (optionData[currentType][index]?.isCustom) {
                 const body = document.getElementById(`opt-body-${index}`);
                 const btn = document.getElementById(`toggle-btn-${index}`);
                 if (body && !body.classList.contains('expanded')) {
@@ -459,7 +637,7 @@ function toggleFold(event, index) {
 }
 
 function updateCustomField(index) {
-    const item = optionData.center[index];
+    const item = optionData[currentType][index];
     const titleVal = document.getElementById(`custom-title-${index}`)?.value || '';
     const descVal = document.getElementById(`custom-desc-${index}`)?.value || '';
     const baseVal = parseFloat(document.getElementById(`custom-base-${index}`)?.value) || 0;
@@ -482,7 +660,7 @@ function updateCustomField(index) {
 }
 
 function updateOptionPriceField(index) {
-    const item = optionData.center[index];
+    const item = optionData[currentType][index];
     const baseVal = Math.round(parseFloat(document.getElementById(`edit-base-${index}`)?.value) || 0);
     const discountVal = Math.round(parseFloat(document.getElementById(`edit-discount-${index}`)?.value) || 0);
 
@@ -542,23 +720,101 @@ function syncQtyFromDOM() {
             el.value = val;
             opt.qty = val;
         }
-        if (currentType !== 'center') {
+        if (!hasCenterOptions(currentType)) {
             const priceEl = document.getElementById(`price-${opt.index}`);
             if (priceEl) opt.price = parseFloat(priceEl.value) || 0;
         }
-        if (currentType === 'center' && optionData.center[opt.index]?.isCustom) {
+        if (hasCenterOptions(currentType) && optionData[currentType][opt.index]?.isCustom) {
             updateCustomField(opt.index);
         }
     });
 }
 
 function updateTotalFromOptions() {
-    const totalSupply = selectedOptions.reduce((sum, o) => sum + (o.price || 0) * (o.qty || 1), 0);
-    const tax = Math.floor(totalSupply * 0.1);
-    const total = totalSupply + tax;
-    document.getElementById('inputSupplyPrice').value = totalSupply.toLocaleString('ko-KR');
-    document.getElementById('inputTaxPrice').value = tax.toLocaleString('ko-KR');
-    document.getElementById('inputTotalPrice').value = total.toLocaleString('ko-KR');
+    const usd = isUSD();
+    const totalSupply = supplyOf(selectedOptions, usd);
+    const tax = taxOf(totalSupply, usd, isExport());
+    const total = usd ? round2(totalSupply + tax) : totalSupply + tax;
+    const show = n => usd ? fmtMoney(n) : n.toLocaleString('ko-KR');
+    document.getElementById('inputSupplyPrice').value = show(totalSupply);
+    document.getElementById('inputTaxPrice').value = show(tax);
+    document.getElementById('inputTotalPrice').value = show(total);
+}
+
+// Step 3 수출 문서 설정(종류/통화) → 상태 반영
+function onDocSettingsChange() {
+    docType = document.getElementById('inputDocType').value;
+    docCurrency = document.getElementById('inputCurrency').value;
+    updateDocSettingsVisibility();
+    renderItemOrderList();
+    updateTotalFromOptions();
+}
+
+// 상태 → Step 3 문서 설정 입력값
+function syncDocSettingsUI() {
+    document.getElementById('inputDocType').value = docType;
+    document.getElementById('inputCurrency').value = docCurrency;
+    updateDocSettingsVisibility();
+    renderItemOrderList();
+}
+
+function updateDocSettingsVisibility() {
+    document.getElementById('docSettingsBar').style.display = docLang === 'en' ? 'grid' : 'none';
+    document.getElementById('taxPriceGroup').style.display = isExport() ? 'none' : 'flex';
+}
+
+// Step 3 품목 순서 목록 (selectedOptions 순서 = 견적서 행 순서), 수출 USD 는 단가 입력 포함
+function renderItemOrderList() {
+    const container = document.getElementById('itemOrderList');
+    if (!currentType) { container.innerHTML = ''; return; }
+    const usd = isUSD();
+    const last = selectedOptions.length - 1;
+    document.getElementById('itemOrderDesc').innerText = usd
+        ? '▲▼ 버튼으로 순서를 바꾸고, 품목별 단가를 달러로 입력해 주세요.'
+        : '▲▼ 버튼으로 견적서에 표시될 순서를 바꿀 수 있습니다.';
+    container.innerHTML = selectedOptions.map((opt, pos) => {
+        const item = optionData[currentType][opt.index];
+        const title = translateItemText(item.title) || getInvoiceText().customTitle;
+        const meta = usd
+            ? `수량 ${opt.qty || 1}`
+            : `${opt.qty || 1}개 · ${fmt(opt.price || 0)} 원`;
+        const usdInput = usd ? `
+                <div class="custom-price-input-wrap">
+                    <input type="number" class="custom-price-field" id="usd-${opt.index}" step="1" min="0"
+                           value="${opt.usdPrice != null ? opt.usdPrice : ''}"
+                           placeholder="USD 단가 입력"
+                           oninput="updateUsdPrice(${opt.index})">
+                    <span class="custom-price-unit">USD</span>
+                </div>` : '';
+        return `
+            <div class="item-order-row${usd ? ' with-usd' : ''}">
+                <div class="item-order-btns">
+                    <button type="button" class="item-order-btn" onclick="moveItem(${pos}, -1)" ${pos === 0 ? 'disabled' : ''} title="위로">▲</button>
+                    <button type="button" class="item-order-btn" onclick="moveItem(${pos}, 1)" ${pos === last ? 'disabled' : ''} title="아래로">▼</button>
+                </div>
+                <div class="item-order-name">${pos + 1}. ${item.id} · ${title}</div>
+                <div class="item-order-meta">${meta}</div>${usdInput}
+            </div>`;
+    }).join('');
+}
+
+function moveItem(pos, dir) {
+    const target = pos + dir;
+    if (target < 0 || target >= selectedOptions.length) return;
+    [selectedOptions[pos], selectedOptions[target]] = [selectedOptions[target], selectedOptions[pos]];
+    renderItemOrderList();
+}
+
+function hasAllUsdPrices() {
+    return selectedOptions.every(o => o.usdPrice > 0);
+}
+
+function updateUsdPrice(index) {
+    const raw = document.getElementById(`usd-${index}`).value.trim();
+    const opt = selectedOptions.find(o => o.index === index);
+    if (!opt) return;
+    opt.usdPrice = raw === '' ? null : Math.round(parseFloat(raw) || 0);
+    updateTotalFromOptions();
 }
 
 function validateAndGoStep3() {
@@ -567,120 +823,141 @@ function validateAndGoStep3() {
         return;
     }
     syncQtyFromDOM();
-    if (currentType === 'center') {
-        const customIdx = optionData.center.findIndex(i => i.isCustom);
+    if (hasCenterOptions(currentType)) {
+        const customIdx = optionData[currentType].findIndex(i => i.isCustom);
         const hasCustom = selectedOptions.some(o => o.index === customIdx);
-        if (hasCustom && !optionData.center[customIdx].title.trim()) {
-            alert("커스텀 옵션(옵션12)의 품목명을 입력해 주세요.");
+        if (hasCustom && !optionData[currentType][customIdx].title.trim()) {
+            alert(`커스텀 옵션(${optionData[currentType][customIdx].id})의 품목명을 입력해 주세요.`);
             return;
         }
     }
     updateTotalFromOptions();
+    renderItemOrderList();
     goStep(3);
 }
 
 function fmt(n) { return n.toLocaleString('ko-KR'); }
 
 function buildInvoiceRows() {
-    const isCenter = currentType === 'center';
-    const totalSupply = selectedOptions.reduce((sum, o) => sum + (o.price || 0) * (o.qty || 1), 0);
-    const grandTotal = totalSupply + Math.floor(totalSupply * 0.1);
+    const t = getInvoiceText();
+    const isCenter = hasCenterOptions(currentType);
+    const usd = isUSD();
+    const totalSupply = supplyOf(selectedOptions, usd);
+    const grandTotal = usd ? round2(totalSupply + taxOf(totalSupply, usd, isExport())) : totalSupply + taxOf(totalSupply, usd, isExport());
 
     let rows = selectedOptions.map(opt => {
         const item = optionData[currentType][opt.index];
-        const unitPrice = opt.price || 0;
+        const unitPrice = unitPriceOf(opt, usd);
         const qty = opt.qty || 1;
-        const lineSupply = unitPrice * qty;
-        const lineTotal = lineSupply + Math.floor(lineSupply * 0.1);
+        const lineSupply = usd ? round2(unitPrice * qty) : unitPrice * qty;
+        const lineTotal = usd ? round2(lineSupply + taxOf(lineSupply, usd, isExport())) : lineSupply + taxOf(lineSupply, usd, isExport());
 
+        // USD 문서는 원화 기준가가 없으므로 할인 표기 없이 입력 단가만 표시
         let priceCell = '';
-        if (isCenter && item.basePrice && applyDiscount) {
+        if (isCenter && !usd && item.basePrice && applyDiscount) {
             const discPct = Math.round((1 - unitPrice / item.basePrice) * 100);
             priceCell = `
-                <div class="rate-base">${fmt(item.basePrice)} 원 <span class="rate-badge">-${discPct}%</span></div>
-                <div class="rate-discount">${fmt(unitPrice)} 원</div>`;
+                <div class="rate-base">${fmtMoney(item.basePrice)} <span class="rate-badge">-${discPct}%</span></div>
+                <div class="rate-discount">${fmtMoney(unitPrice)}</div>`;
         } else {
-            priceCell = `${fmt(unitPrice)} 원`;
+            priceCell = fmtMoney(unitPrice);
         }
 
-        const displayTitle = item.title || (item.isCustom ? '커스텀 옵션' : '');
+        const displayTitle = translateItemText(item.title) || (item.isCustom ? t.customTitle : '');
         const descHtml = item.isCustom
             ? item.desc.split('\n').filter(l => l.trim()).map(l => `<div class="desc-l3">${l}</div>`).join('')
-            : item.desc;
+            : translateItemText(item.desc);
 
         return `
             <tr>
-                <td style="font-weight:700; font-size:14px; color:#499cdf;">${item.id.replace('옵션', '')}</td>
+                <td class="col-code" style="font-weight:700; font-size:14px; color:#499cdf;">${item.id.replace('옵션', '')}</td>
                 <td>
                     <div class="table-item-title">${displayTitle}</div>
                     <div class="table-item-desc">${descHtml}</div>
                 </td>
-                <td class="text-right" style="font-weight:600; color:#202020;">${qty}개</td>
+                <td class="text-right" style="font-weight:600; color:#202020;">${qty}${t.qtyUnit}</td>
                 <td class="text-right rate-cell">${priceCell}</td>
-                <td class="text-right total-cell">${fmt(lineTotal)} 원</td>
+                <td class="text-right total-cell">${fmtMoney(lineTotal)}</td>
             </tr>
         `;
     }).join('');
 
     if (selectedOptions.length > 1) {
+        // 수출 문서는 합계 행을 품목 단가(18px)와 같은 크기로 표시
+        const [labelSize, supplySize, totalSize] = isExport() ? [18, 18, 18] : [13, 14, 15];
         rows += `
             <tr class="invoice-summary-row">
-                <td colspan="3" class="text-right" style="font-weight:700; font-size:13px; color:#64748b;">합 계</td>
-                <td class="text-right" style="font-weight:700; font-size:14px; color:#202020;">${fmt(totalSupply)} 원</td>
-                <td class="text-right" style="font-weight:800; font-size:15px; color:#499cdf;">${fmt(grandTotal)} 원</td>
+                <td colspan="${isExport() ? 2 : 3}" class="text-right" style="font-weight:700; font-size:${labelSize}px; color:#64748b; vertical-align:middle;">${t.summary}</td>
+                <td class="text-right" style="font-weight:700; font-size:${supplySize}px; color:#202020; vertical-align:middle;">${fmtMoney(totalSupply)}</td>
+                <td class="text-right" style="font-weight:800; font-size:${totalSize}px; color:#499cdf; vertical-align:middle;">${fmtMoney(grandTotal)}</td>
             </tr>
         `;
     }
     return { rows, totalSupply, grandTotal };
 }
 
-function generateInvoice() {
+// 현재 상태 + Step 3 입력값으로 견적서 문서를 그려 미리보기로 전환
+function renderInvoiceDocument() {
+    const t = getInvoiceText();
     const clientName = document.getElementById('inputClientName').value.trim();
     const managerName = document.getElementById('inputManagerName').value.trim();
     const invoiceDate = document.getElementById('inputDate').value;
     const remarks = document.getElementById('inputRemarks').value.trim();
 
+    document.querySelectorAll('#invoicePreviewWrapper [data-i18n]').forEach(el => {
+        el.innerHTML = t[el.dataset.i18n];
+    });
+
+    document.getElementById('pdfInvoiceNumber').innerText = currentInvoiceNumber || '-';
+    document.getElementById('pdfClientName').innerText = clientName;
+    document.getElementById('pdfManagerName').innerHTML = `<span style="color:#94a3b8;">${t.manager}</span> ${managerName || t.managerDefault}`;
+
+    const dateObj = new Date(invoiceDate);
+    document.getElementById('pdfDate').innerText = formatDocDate(dateObj);
+
+    const dueDateObj = new Date(dateObj);
+    dueDateObj.setDate(dueDateObj.getDate() + 30);
+    // 수출은 납품 기준 지급이므로 날짜 대신 조건 문구 표시
+    document.getElementById('pdfDueDateBanner').innerText = isExport() ? t.dueVal : formatDocDate(dueDateObj);
+
+    const { rows, grandTotal } = buildInvoiceRows();
+    document.getElementById('invoiceTableBody').innerHTML = rows;
+    document.getElementById('invoiceTable').classList.toggle('no-code', isExport());
+
+    document.getElementById('pdfGrandTotalBanner').innerText = fmtMoney(grandTotal);
+    document.getElementById('pdfRemarks').innerText = isExport()
+        ? getExportRemarks() + (remarks ? '\n' + remarks : '')
+        : (remarks || t.defaultRemarks);
+
+    document.getElementById('workspaceContainer').style.display = "none";
+    document.getElementById('invoicePreviewWrapper').style.display = "block";
+}
+
+function generateInvoice() {
+    const clientName = document.getElementById('inputClientName').value.trim();
+    const invoiceDate = document.getElementById('inputDate').value;
+
     syncQtyFromDOM();
     if (!clientName) { alert("고객명을 입력해 주세요."); return; }
     if (!invoiceDate) { alert("견적일자를 선택해 주세요."); return; }
     if (selectedOptions.length === 0) { alert("옵션을 선택해 주세요."); return; }
+    if (isUSD() && !hasAllUsdPrices()) { alert("모든 품목의 USD 단가를 입력해 주세요."); return; }
 
     const totalSupply = selectedOptions.reduce((sum, o) => sum + (o.price || 0), 0);
-    if (currentType !== 'center' && totalSupply <= 0) {
+    if (!hasCenterOptions(currentType) && totalSupply <= 0) {
         alert("옵션별 공급가액을 입력해 주세요."); return;
     }
 
     if (!currentInvoiceNumber) currentInvoiceNumber = generateInvoiceNumber();
-    document.getElementById('pdfInvoiceNumber').innerText = currentInvoiceNumber;
-
-    document.getElementById('pdfClientName').innerText = clientName;
-    document.getElementById('pdfManagerName').innerHTML = `<span style="color:#94a3b8;">담당자:</span> ${managerName || '귀하'}`;
-
-    const dateObj = new Date(invoiceDate);
-    const formattedDate = `${dateObj.getFullYear()}년 ${dateObj.getMonth()+1}월 ${dateObj.getDate()}일`;
-    document.getElementById('pdfDate').innerText = formattedDate;
-
-    const dueDateObj = new Date(dateObj);
-    dueDateObj.setDate(dueDateObj.getDate() + 30);
-    const formattedDueDate = `${dueDateObj.getFullYear()}년 ${dueDateObj.getMonth()+1}월 ${dueDateObj.getDate()}일`;
-    document.getElementById('pdfDueDateBanner').innerText = formattedDueDate;
-
-    const { rows, grandTotal } = buildInvoiceRows();
-    document.getElementById('invoiceTableBody').innerHTML = rows;
-
-    document.getElementById('pdfGrandTotalBanner').innerText = fmt(grandTotal) + " 원";
-    document.getElementById('pdfRemarks').innerText = remarks || "특이사항 없음. 본 견적서의 유효기간은 발행일로부터 30일입니다.";
-
-    document.getElementById('workspaceContainer').style.display = "none";
-    document.getElementById('invoicePreviewWrapper').style.display = "block";
+    renderInvoiceDocument();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function printInvoice() {
     const today = new Date().toISOString().substring(0, 10).replace(/-/g, '');
-    const clientName = document.getElementById('pdfClientName').innerText.trim() || '기관명';
+    const clientName = document.getElementById('pdfClientName').innerText.trim() || (docLang === 'en' ? 'Client' : '기관명');
     const originalTitle = document.title;
-    document.title = `${today}-아이해브견적서-${clientName}`;
+    document.title = `${today}-${getInvoiceText().fileLabel}-${clientName}`;
     window.onafterprint = () => {
         document.title = originalTitle;
         window.onafterprint = null;
@@ -699,12 +976,16 @@ function resetSystem() {
     currentEditingId = null;
     currentInvoiceNumber = null;
     applyDiscount = false;
+    docLang = 'ko';
+    docType = 'quotation';
+    docCurrency = 'KRW';
+    syncDocSettingsUI();
     const toggle = document.getElementById('discountToggle');
     if (toggle) toggle.checked = false;
-    const customIdx = optionData.center.findIndex(i => i.isCustom);
-    if (customIdx >= 0) {
-        Object.assign(optionData.center[customIdx], { title: '', desc: '', basePrice: 0, discountPrice: 0, cost: 0 });
-    }
+    [optionData.center, optionData.export].forEach(items => {
+        const custom = items.find(i => i.isCustom);
+        if (custom) Object.assign(custom, { title: '', desc: '', basePrice: 0, discountPrice: 0, cost: 0 });
+    });
 
     document.getElementById('workspaceContainer').style.display = "block";
     document.getElementById('invoicePreviewWrapper').style.display = "none";
@@ -721,10 +1002,10 @@ function saveInvoice() {
     const id = currentEditingId || Date.now().toString();
 
     let customSnapshot = null;
-    if (currentType === 'center') {
-        const customIdx = optionData.center.findIndex(i => i.isCustom);
+    if (hasCenterOptions(currentType)) {
+        const customIdx = optionData[currentType].findIndex(i => i.isCustom);
         if (customIdx >= 0 && selectedOptions.some(o => o.index === customIdx)) {
-            const ci = optionData.center[customIdx];
+            const ci = optionData[currentType][customIdx];
             customSnapshot = { title: ci.title, desc: ci.desc, basePrice: ci.basePrice, discountPrice: ci.discountPrice };
         }
     }
@@ -733,6 +1014,9 @@ function saveInvoice() {
         id,
         invoiceNumber: currentInvoiceNumber,
         applyDiscount,
+        docLang,
+        docType,
+        currency: docCurrency,
         savedAt: new Date().toISOString(),
         type: currentType,
         selectedOptions: [...selectedOptions],
@@ -773,9 +1057,19 @@ function renderSavedList() {
     countEl.innerText = `총 ${list.length}건`;
 
     container.innerHTML = list.map(inv => {
-        const totalSupply = getTotalFromInv(inv);
-        const grandTotal = totalSupply + Math.floor(totalSupply * 0.1);
-        const typeLabel = inv.type === 'center' ? '센터' : '병원';
+        const invUSD = inv.docLang === 'en' && inv.currency === 'USD';
+        let totalLabel;
+        if (invUSD) {
+            const supply = supplyOf(inv.selectedOptions || [], true);
+            const total = supply;  // 수출 문서는 VAT 없음
+            totalLabel = `USD ${total.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+        } else {
+            const totalSupply = getTotalFromInv(inv);
+            const vat = inv.docLang === 'en' ? 0 : Math.floor(totalSupply * 0.1);
+            totalLabel = `${fmt(totalSupply + vat)}원`;
+        }
+        const langLabel = inv.docLang === 'en' ? ` · ${inv.docType === 'invoice' ? 'Invoice' : 'Quotation'}` : '';
+        const typeLabel = (typeLabels[inv.type] || inv.type) + langLabel;
         const optCount = inv.selectedOptions ? inv.selectedOptions.length : 1;
         const firstOptIdx = inv.selectedOptions ? inv.selectedOptions[0].index : inv.selectedOptionIndex;
         const firstItem = optionData[inv.type][firstOptIdx];
@@ -788,7 +1082,7 @@ function renderSavedList() {
             <div class="saved-item-card">
                 <div>
                     <div class="saved-item-client">${inv.clientName}</div>
-                    <div class="saved-item-meta">${typeLabel} · ${optLabel} · ${inv.invoiceDate} · 합계 ${fmt(grandTotal)}원</div>
+                    <div class="saved-item-meta">${typeLabel} · ${optLabel} · ${inv.invoiceDate} · 합계 ${totalLabel}</div>
                 </div>
                 <div class="saved-item-actions">
                     <button class="btn-secondary" style="padding:6px 14px; font-size:13px;" onclick="viewInvoice('${inv.id}')">보기</button>
@@ -803,6 +1097,9 @@ function renderSavedList() {
 function restoreInvoiceState(inv) {
     currentType = inv.type;
     applyDiscount = inv.applyDiscount || false;
+    docLang = inv.docLang || 'ko';
+    docType = inv.docType || 'quotation';
+    docCurrency = inv.currency || 'KRW';
     const toggle = document.getElementById('discountToggle');
     if (toggle) toggle.checked = applyDiscount;
     if (inv.selectedOptions) {
@@ -810,10 +1107,11 @@ function restoreInvoiceState(inv) {
     } else {
         selectedOptions = [{ index: inv.selectedOptionIndex, price: inv.supplyVal || 0, qty: 1 }];
     }
-    if (inv.customSnapshot && inv.type === 'center') {
-        const customIdx = optionData.center.findIndex(i => i.isCustom);
-        if (customIdx >= 0) Object.assign(optionData.center[customIdx], inv.customSnapshot);
+    if (inv.customSnapshot && hasCenterOptions(inv.type)) {
+        const customIdx = optionData[currentType].findIndex(i => i.isCustom);
+        if (customIdx >= 0) Object.assign(optionData[currentType][customIdx], inv.customSnapshot);
     }
+    syncDocSettingsUI();
 }
 
 function viewInvoice(id) {
@@ -830,27 +1128,7 @@ function viewInvoice(id) {
     document.getElementById('inputRemarks').value = inv.remarks || '';
     updateTotalFromOptions();
 
-    document.getElementById('pdfInvoiceNumber').innerText = currentInvoiceNumber || '-';
-    document.getElementById('pdfClientName').innerText = inv.clientName;
-    document.getElementById('pdfManagerName').innerHTML = `<span style="color:#94a3b8;">담당자:</span> ${inv.managerName || '귀하'}`;
-
-    const dateObj = new Date(inv.invoiceDate);
-    const formattedDate = `${dateObj.getFullYear()}년 ${dateObj.getMonth()+1}월 ${dateObj.getDate()}일`;
-    document.getElementById('pdfDate').innerText = formattedDate;
-
-    const dueDateObj = new Date(dateObj);
-    dueDateObj.setDate(dueDateObj.getDate() + 30);
-    const formattedDueDate = `${dueDateObj.getFullYear()}년 ${dueDateObj.getMonth()+1}월 ${dueDateObj.getDate()}일`;
-    document.getElementById('pdfDueDateBanner').innerText = formattedDueDate;
-
-    const { rows, grandTotal } = buildInvoiceRows();
-    document.getElementById('invoiceTableBody').innerHTML = rows;
-
-    document.getElementById('pdfGrandTotalBanner').innerText = fmt(grandTotal) + " 원";
-    document.getElementById('pdfRemarks').innerText = inv.remarks || "특이사항 없음. 본 견적서의 유효기간은 발행일로부터 30일입니다.";
-
-    document.getElementById('workspaceContainer').style.display = "none";
-    document.getElementById('invoicePreviewWrapper').style.display = "block";
+    renderInvoiceDocument();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -870,7 +1148,7 @@ function editInvoice(id) {
     restoreInvoiceState(inv);
 
     document.getElementById('typeTitleText').innerText =
-        currentType === 'center' ? '견적구성 _ 센터 옵션 선택' : '견적구성 _ 병원 옵션 선택';
+        `견적구성 _ ${typeLabels[currentType]} 옵션 선택`;
     renderOptions();
 
     document.getElementById('inputClientName').value = inv.clientName;
@@ -882,7 +1160,59 @@ function editInvoice(id) {
     goStep(2);
 }
 
+// 새로고침 시 작업 화면 유지: 페이지를 떠날 때 현재 상태를 탭 단위(sessionStorage)로 보관
+const SESSION_KEY = 'ihab_working_state';
+const sessionFormFields = ['inputClientName', 'inputManagerName', 'inputDate', 'inputRemarks'];
+
+function getCurrentView() {
+    if (document.getElementById('invoicePreviewWrapper').style.display === 'block') return 'preview';
+    const active = document.querySelector('.step-section.active');
+    return active ? active.id : 'step1';
+}
+
+function saveSessionState() {
+    if (currentType) syncQtyFromDOM();
+    const state = {
+        view: getCurrentView(),
+        currentType, selectedOptions, applyDiscount,
+        docLang, docType, docCurrency,
+        currentEditingId, currentInvoiceNumber,
+        // Step 2 에서 수정한 가격/커스텀 입력 보존
+        items: currentType
+            ? optionData[currentType].map(i => ({ title: i.title, desc: i.desc, basePrice: i.basePrice, discountPrice: i.discountPrice, cost: i.cost }))
+            : null,
+        form: Object.fromEntries(sessionFormFields.map(id => [id, document.getElementById(id).value]))
+    };
+    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function restoreSessionState() {
+    let state = null;
+    try { state = JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch (e) {}
+    if (!state || !state.currentType || state.view === 'step1') return;
+
+    ({ currentType, selectedOptions, applyDiscount, docLang, docType, docCurrency, currentEditingId, currentInvoiceNumber } = state);
+    if (state.items) state.items.forEach((saved, i) => Object.assign(optionData[currentType][i], saved));
+    sessionFormFields.forEach(id => { document.getElementById(id).value = state.form[id] || ''; });
+
+    document.getElementById('discountToggle').checked = applyDiscount;
+    document.getElementById('typeTitleText').innerText = `견적구성 _ ${typeLabels[currentType]} 옵션 선택`;
+    syncDocSettingsUI();
+    renderOptions();
+    updateTotalFromOptions();
+
+    if (state.view === 'preview') {
+        renderInvoiceDocument();
+    } else {
+        document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(state.view).classList.add('active');
+    }
+}
+
+window.addEventListener('pagehide', saveSessionState);
+
 renderSavedList();
+restoreSessionState();
 
 // 스크롤 휠로 number input 값이 변경되는 브라우저 기본 동작 방지
 document.addEventListener('wheel', function () {
