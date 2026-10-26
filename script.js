@@ -331,7 +331,7 @@ const itemPhraseEn = [
     [/시스템 설치 및 최적화 구축/g, 'System Installation &amp; Optimization'],
     [/초기 성능 검증 및 시스템 점검/g, 'Initial Performance Verification &amp; System Inspection'],
     [/피검사용 검사 터치패드/g, 'Touchpad for Examinee Testing'],
-    [/피검자용 맞춤 제작 의자 &amp; 거치대 세트/g, 'Custom-made Examinee Chair &amp; Stand Set'],
+    [/피검자용 맞춤 제작 의자 &amp; 거치대 세트/g, 'Sound Localization Testing Chair &amp; Stand Set'],
     [/국제표준 기반 (\d+)채널 스피커 프레임 시스템/g, 'International Standard-based $1-Channel Speaker Frame System'],
     [/검사용 스피커/g, 'Test Speaker'],
     [/전원선 세트/g, 'Power Cable Set'],
