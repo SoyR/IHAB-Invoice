@@ -301,7 +301,7 @@ const invoiceText = {
         dueVal: 'Within 30 days after delivery'
     },
     quotation: {
-        brand: 'Sound Localization System',
+        brand: 'SoundCompass',
         recipient: 'Quotation To',
         numberKey: 'Quotation No.:',
         dateKey: 'Quotation Date:',
@@ -312,7 +312,7 @@ const invoiceText = {
         fileLabel: 'IHAB-Quotation'
     },
     invoice: {
-        brand: 'Sound Localization System',
+        brand: 'SoundCompass',
         recipient: 'Bill To',
         numberKey: 'Invoice No.:',
         dateKey: 'Invoice Date:',
@@ -911,6 +911,7 @@ function renderInvoiceDocument() {
     document.querySelectorAll('#invoicePreviewWrapper [data-i18n]').forEach(el => {
         el.innerHTML = t[el.dataset.i18n];
     });
+    document.querySelector('.invoice-brand-text').classList.toggle('brand-export', isExport());
 
     document.getElementById('pdfInvoiceNumber').innerText = currentInvoiceNumber || '-';
     document.getElementById('pdfClientName').innerText = clientName;

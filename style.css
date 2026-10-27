@@ -4,6 +4,12 @@
     font-weight: 700;
     font-display: swap;
 }
+@font-face {
+    font-family: 'Paperologi';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-9Black.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+}
 
 /* Base Reset & Typography */
 *, *::before, *::after {
@@ -588,6 +594,7 @@ textarea.form-input {
     font-weight: 700;
     color: #202020;
 }
+.invoice-brand-text.brand-export { font-weight: 900; }
 .invoice-type-badge {
     font-size: 13px;
     color: #94a3b8;
