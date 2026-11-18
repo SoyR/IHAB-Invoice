@@ -378,6 +378,35 @@ body {
 .desc-l4 { padding-left: 18px; font-size: 12px; color: #94a3b8; margin: 1px 0; }
 
 /* STEP 3: Document Language / Currency Settings */
+/* STEP 3: 국내용 문서 종류 (견적서/거래명세서) */
+.doc-type-ko-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 18px;
+    margin-bottom: 24px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+.doc-type-ko-bar .form-label { margin: 0; }
+.doc-type-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #202020;
+    cursor: pointer;
+}
+.doc-type-radio input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #499cdf;
+    cursor: pointer;
+}
 .doc-settings-bar {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -613,6 +642,10 @@ textarea.form-input {
     font-weight: 700;
     color: #202020;
     margin-bottom: 6px;
+}
+/* 전체 * 규칙(Noto Sans KR)이 안쪽 span 에 직접 적용되므로 하위 요소도 Paperologi 로 지정 */
+.company-name-bold * {
+    font-family: 'Paperologi', 'Noto Sans KR', sans-serif;
 }
 .company-info-label {
     color: #94a3b8;
@@ -1012,6 +1045,40 @@ textarea.form-input {
     border-color: #499cdf;
     box-shadow: 0 0 0 3px rgba(73, 156, 223, 0.12);
 }
+
+/* 커스텀 옵션: 다른 옵션 상세 구성 항목 체크박스 선택 */
+.custom-pick-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #fff;
+}
+.custom-pick {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 14px;
+    color: #202020;
+    line-height: 1.5;
+    cursor: pointer;
+}
+.custom-pick input[type="checkbox"] {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    accent-color: #499cdf;
+    cursor: pointer;
+}
+.custom-pick-l1 { font-weight: 700; }
+.custom-pick-l1:not(:first-child) { margin-top: 8px; }
+.custom-pick-l2 { padding-left: 20px; font-weight: 600; }
+.custom-pick-l3 { padding-left: 40px; color: #475569; }
+.custom-pick-textarea { margin: 4px 0 0 24px; width: calc(100% - 24px); }
 
 /* 가격 입력 필드 스크롤 휠로 인한 값 변경 방지 — 스피너 제거 */
 .custom-price-field::-webkit-outer-spin-button,
