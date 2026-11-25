@@ -13,7 +13,7 @@ const optionData = {
         {
             id: "옵션1",
             title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_5F 고급형 풀패키지",
-            cost: 18100000, basePrice: 18100000, discountPrice: 14840000,
+            defaultBasePrice: 25000000, defaultDiscountPrice: 22000000,
             desc: `<div class="desc-l1">소리방향성시스템 기본 패키지</div>
 <div class="desc-l2">소프트웨어</div>
 <div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
@@ -28,13 +28,13 @@ const optionData = {
 <div class="desc-l3">전원선 세트</div>
 <div class="desc-l3">연결 오디오 케이블</div>
 <div class="desc-l3">멀티탭</div>
-<div class="desc-l2">Motu UltraLite mk5</div>
+<div class="desc-l2">오디오 인터페이스</div>
 <div class="desc-l2">검사 전용 노트북(소프트웨어 설치)</div>`
         },
         {
             id: "옵션2",
             title: "소리방향성시스템 기본 패키지 + 하드웨어 구성_7F 고급형 풀패키지",
-            cost: 22010000, basePrice: 22010000, discountPrice: 17430000,
+            defaultBasePrice: 28000000, defaultDiscountPrice: 26000000,
             desc: `<div class="desc-l1">소리방향성시스템 기본 패키지</div>
 <div class="desc-l2">소프트웨어</div>
 <div class="desc-l3">소리방향성시스템 소프트웨어 라이선스(5년)</div>
@@ -49,7 +49,7 @@ const optionData = {
 <div class="desc-l3">전원선 세트</div>
 <div class="desc-l3">연결 오디오 케이블</div>
 <div class="desc-l3">멀티탭</div>
-<div class="desc-l2">Motu UltraLite mk5</div>
+<div class="desc-l2">오디오 인터페이스</div>
 <div class="desc-l2">검사 전용 노트북(소프트웨어 설치)</div>`
         },
         {
@@ -68,6 +68,23 @@ optionData.export = [
     ...optionData.center.filter(i => !i.isCustom).map(i => ({ ...i })),
     { id: "옵션3", title: "", cost: 0, basePrice: 0, discountPrice: 0, isCustom: true, desc: "" }
 ];
+// 수출용은 국내용 기본가 변경 이전 가격 유지
+[[18100000, 14840000], [22010000, 17430000]].forEach(([base, disc], i) => {
+    Object.assign(optionData.export[i], { defaultBasePrice: base, defaultDiscountPrice: disc });
+});
+
+// 패키지 옵션 가격: 입력칸이 비어 있으면 기본가(default*) 적용, 직접 입력하면 그 값 사용
+// basePrice/discountPrice 는 실제 적용 가격
+function resetPackagePrices() {
+    Object.values(optionData).forEach(items => items.filter(i => !i.isCustom).forEach(i => {
+        Object.assign(i, { basePrice: i.defaultBasePrice, discountPrice: i.defaultDiscountPrice, cost: i.defaultBasePrice });
+    }));
+}
+resetPackagePrices();
+// 입력칸 표시값: 기본가와 같으면 비워서 placeholder(기본가)가 보이게 함
+function priceInputValue(price, defaultPrice) {
+    return price === defaultPrice ? '' : price;
+}
 // 'center' 키는 저장된 견적서 호환을 위해 유지, 화면 표기는 '국내용'
 const typeLabels = { center: '국내용', export: '수출용' };
 function hasCenterOptions(type) { return type === 'center' || type === 'export'; }
@@ -121,13 +138,14 @@ function buildCustomDescHtml(item, type) {
 const exportTerms = {
     validity: 'This quotation is valid for 30 days from the date of issue.',
     payment: 'Payment Terms: Payment is due within 30 days after delivery.',
-    trade: 'Trade Terms: All import duties, customs clearance fees, taxes, and any other charges levied in the destination country shall be borne by the Buyer.'
+    trade: 'Trade Terms: All import duties, customs clearance fees, taxes, and any other charges levied in the destination country shall be borne by the Buyer.',
+    ruo: 'For research use only. Not for use in diagnostic procedures.'
 };
 
 function getExportRemarks() {
     const lines = docType === 'invoice'
-        ? [exportTerms.payment, exportTerms.trade]
-        : [exportTerms.validity, exportTerms.payment, exportTerms.trade];
+        ? [exportTerms.payment, exportTerms.trade, exportTerms.ruo]
+        : [exportTerms.validity, exportTerms.payment, exportTerms.trade, exportTerms.ruo];
     return lines.map((line, i) => `${i + 1}. ${line}`).join('\n');
 }
 
@@ -179,7 +197,7 @@ const invoiceText = {
         companyName: 'IHAB Co., Ltd.',
         address: '<span class="company-info-label">Address :</span> #605, 457-25 Heungan-daero, Dongan-gu,<br>Anyang-si, Gyeonggi-do, Republic of Korea',
         phone: '<span class="company-info-label">Tel :</span> +82-31-496-8330',
-        cell: '<span class="company-info-label">Cell :</span> +82-10-9057-5425',
+        cell: '<span class="company-info-label">Cell :</span> +82-10-2196-8330',
         email: '<span class="company-info-label">Email :</span> support@ihab.co.kr',
         thCode: 'Code',
         thItem: 'Item &amp; Description',
@@ -228,7 +246,8 @@ const itemPhraseEn = [
     [/소리방향성시스템 기본 패키지/g, 'SoundCompass Basic Package'],
     [/시스템 설치 및 최적화 구축/g, 'System Installation &amp; Optimization'],
     [/초기 성능 검증 및 시스템 점검/g, 'Initial Performance Verification &amp; System Inspection'],
-    [/피검사용 검사 터치패드/g, 'Touchpad for Examinee Testing'],
+    [/피검사용 검사 터치패드/g, 'Response Touchpad'],
+    [/오디오 인터페이스/g, 'Audio Interface'],
     [/검사 전용 노트북\(소프트웨어 설치\)/g, 'Laptop computer'],
     [/피검자용 맞춤 제작 의자 &amp; 거치대 세트/g, 'Sound Localization Testing Chair &amp; Stand Set'],
     [/국제표준 기반 (\d+)채널 스피커 프레임 시스템/g, 'International Standard-based $1-Channel Speaker Frame System'],
@@ -479,14 +498,14 @@ function renderOptions() {
                         <div class="price-input-col">
                             <div class="price-info-label">공개용 기준가</div>
                             <div class="custom-price-input-wrap">
-                                <input type="number" class="custom-price-field" id="edit-base-${index}" value="${item.basePrice}" placeholder="기준가 입력" oninput="updateOptionPriceField(${index})" onclick="event.stopPropagation()">
+                                <input type="number" class="custom-price-field" id="edit-base-${index}" value="${priceInputValue(item.basePrice, item.defaultBasePrice)}" placeholder="${fmt(item.defaultBasePrice)}" oninput="updateOptionPriceField(${index})" onclick="event.stopPropagation()">
                                 <span class="custom-price-unit">원</span>
                             </div>
                         </div>
                         <div class="price-input-col">
                             <div class="price-info-label">안내용 할인가 <span class="rate-badge" id="edit-disc-badge-${index}" style="display:${initDiscPct > 0 ? 'inline-block' : 'none'};">${initDiscPct > 0 ? `-${initDiscPct}%` : ''}</span></div>
                             <div class="custom-price-input-wrap">
-                                <input type="number" class="custom-price-field" id="edit-discount-${index}" value="${item.discountPrice}" placeholder="할인가 입력" oninput="updateOptionPriceField(${index})" onclick="event.stopPropagation()">
+                                <input type="number" class="custom-price-field" id="edit-discount-${index}" value="${priceInputValue(item.discountPrice, item.defaultDiscountPrice)}" placeholder="${fmt(item.defaultDiscountPrice)}" oninput="updateOptionPriceField(${index})" onclick="event.stopPropagation()">
                                 <span class="custom-price-unit">원</span>
                             </div>
                         </div>
@@ -607,8 +626,13 @@ function updateCustomField(index) {
 
 function updateOptionPriceField(index) {
     const item = optionData[currentType][index];
-    const baseVal = Math.round(parseFloat(document.getElementById(`edit-base-${index}`)?.value) || 0);
-    const discountVal = Math.round(parseFloat(document.getElementById(`edit-discount-${index}`)?.value) || 0);
+    // 비어 있으면 기본가, 입력하면 입력값
+    const readPrice = (id, fallback) => {
+        const raw = (document.getElementById(id)?.value || '').trim();
+        return raw === '' ? fallback : Math.round(parseFloat(raw) || 0);
+    };
+    const baseVal = readPrice(`edit-base-${index}`, item.defaultBasePrice);
+    const discountVal = readPrice(`edit-discount-${index}`, item.defaultDiscountPrice);
 
     item.basePrice = baseVal;
     item.discountPrice = discountVal;
@@ -962,6 +986,7 @@ function resetSystem() {
         const custom = items.find(i => i.isCustom);
         if (custom) Object.assign(custom, { title: '', desc: '', picks: [], useText: false, basePrice: 0, discountPrice: 0, cost: 0 });
     });
+    resetPackagePrices();
 
     document.getElementById('workspaceContainer').style.display = "block";
     document.getElementById('invoicePreviewWrapper').style.display = "none";
@@ -970,7 +995,20 @@ function resetSystem() {
 }
 
 function getSavedList() {
-    return JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'invoices') || '[]').map(migrateInvoice);
+    return JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'invoices') || '[]').map(migrateInvoice).map(renameLegacyTerms);
+}
+
+// 예전 품목명 → 현재 품목명 (저장된 커스텀 옵션의 체크 항목·직접 입력 문구 보정)
+const LEGACY_TERMS = [[/Motu UltraLite mk5/gi, '오디오 인터페이스']];
+function renameLegacyText(text) {
+    return typeof text === 'string' ? LEGACY_TERMS.reduce((t, [from, to]) => t.replace(from, to), text) : text;
+}
+function renameLegacyCustom(c) {
+    if (!c) return c;
+    return { ...c, title: renameLegacyText(c.title), desc: renameLegacyText(c.desc), picks: (c.picks || []).map(renameLegacyText) };
+}
+function renameLegacyTerms(inv) {
+    return inv.customSnapshot ? { ...inv, customSnapshot: renameLegacyCustom(inv.customSnapshot) } : inv;
 }
 
 // 이전 버전으로 저장된 견적서의 옵션 index 를 현재(v4) 목록에 맞게 보정
@@ -1161,6 +1199,8 @@ function editInvoice(id) {
 
 // 새로고침 시 작업 화면 유지: 페이지를 떠날 때 현재 상태를 탭 단위(sessionStorage)로 보관
 const SESSION_KEY = STORAGE_PREFIX + 'working_state';
+// 기본가 변경 시 올림 (v2: 국내용 5F 2,500만/2,200만, 7F 2,800만/2,600만)
+const PRICES_VERSION = 2;
 const sessionFormFields = ['inputClientName', 'inputManagerName', 'inputDate', 'inputRemarks'];
 
 function getCurrentView() {
@@ -1173,6 +1213,7 @@ function saveSessionState() {
     if (currentType) syncQtyFromDOM();
     const state = {
         view: getCurrentView(),
+        pricesVersion: PRICES_VERSION,
         currentType, selectedOptions, applyDiscount,
         docLang, docType, docCurrency,
         currentEditingId, currentInvoiceNumber,
@@ -1192,6 +1233,8 @@ function restoreSessionState() {
     let state = null;
     try { state = JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch (e) {}
     if (!state || !state.currentType || state.view === 'step1') return;
+    // 기본가가 바뀌기 전 세션은 예전 가격이 남아 있으므로 복원하지 않음
+    if (state.pricesVersion !== PRICES_VERSION) return;
     // 옵션 구성이 바뀐 이전 세션은 index 가 어긋나므로 복원하지 않음
     if (state.items && state.items.length !== optionData[state.currentType]?.length) return;
 
@@ -1200,7 +1243,7 @@ function restoreSessionState() {
     if (state.items) state.items.forEach((saved, i) => {
         const item = optionData[currentType][i];
         if (!item) return;
-        const { basePrice, discountPrice, cost, title, desc, picks, useText } = saved;
+        const { basePrice, discountPrice, cost, title, desc, picks, useText } = item.isCustom ? renameLegacyCustom(saved) : saved;
         Object.assign(item, { basePrice, discountPrice, cost },
             item.isCustom ? { title: title || '', desc: desc || '', picks: picks || [], useText } : {});
     });
