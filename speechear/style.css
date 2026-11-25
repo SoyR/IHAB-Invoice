@@ -4,12 +4,6 @@
     font-weight: 700;
     font-display: swap;
 }
-@font-face {
-    font-family: 'Paperologi';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-9Black.woff2') format('woff2');
-    font-weight: 900;
-    font-display: swap;
-}
 
 /* Base Reset & Typography */
 *, *::before, *::after {
@@ -144,6 +138,21 @@ body {
     height: 16px;
     accent-color: #499cdf;
     cursor: pointer;
+}
+.discount-toggle-label input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #499cdf;
+    cursor: pointer;
+}
+.doc-type-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+}
+/* 거래명세서 모드에서는 견적서 전용 영역 숨김 */
+.doc-statement .quote-only {
+    display: none !important;
 }
 .discount-toggle-desc {
     font-size: 13px;
@@ -377,118 +386,6 @@ body {
 }
 .desc-l4 { padding-left: 18px; font-size: 12px; color: #94a3b8; margin: 1px 0; }
 
-/* STEP 3: Document Language / Currency Settings */
-/* STEP 3: 국내용 문서 종류 (견적서/거래명세서) */
-.doc-type-ko-bar {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 18px;
-    margin-bottom: 24px;
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-}
-.doc-type-ko-bar .form-label { margin: 0; }
-.doc-type-radio {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #202020;
-    cursor: pointer;
-}
-.doc-type-radio input[type="radio"] {
-    width: 16px;
-    height: 16px;
-    margin: 0;
-    accent-color: #499cdf;
-    cursor: pointer;
-}
-.doc-settings-bar {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    padding: 18px;
-    margin-bottom: 24px;
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-}
-.doc-settings-bar .form-input {
-    height: 42px;
-    background-color: #fff;
-}
-/* STEP 3: 품목 순서 (수출 USD 는 단가 입력 포함) */
-.item-order-section {
-    padding: 18px;
-    margin-bottom: 24px;
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-}
-.item-order-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: #202020;
-    margin-bottom: 10px;
-}
-.item-order-title span {
-    font-size: 12px;
-    font-weight: 400;
-    color: #94a3b8;
-    margin-left: 8px;
-}
-.item-order-row {
-    display: grid;
-    grid-template-columns: 64px minmax(0, 1fr) 160px;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid #e8edf3;
-    font-size: 13px;
-    color: #475569;
-}
-.item-order-row.with-usd {
-    grid-template-columns: 64px minmax(0, 1fr) 70px 200px;
-}
-.item-order-row:last-child { border-bottom: none; }
-.item-order-btns {
-    display: flex;
-    gap: 4px;
-}
-.item-order-btn {
-    width: 28px;
-    height: 28px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background-color: #fff;
-    color: #475569;
-    font-size: 11px;
-    cursor: pointer;
-}
-.item-order-btn:hover:not(:disabled) {
-    border-color: #499cdf;
-    color: #499cdf;
-}
-.item-order-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-}
-.item-order-name { font-weight: 600; color: #202020; }
-.item-order-meta { text-align: right; }
-.item-order-row .custom-price-input-wrap {
-    margin-top: 0;
-    min-width: 0;
-}
-.item-order-row .custom-price-field {
-    width: 100%;
-    min-width: 0;
-    text-align: right;
-}
-
 /* STEP 3: Form Input Fields */
 .form-grid {
     display: grid;
@@ -623,7 +520,6 @@ textarea.form-input {
     font-weight: 700;
     color: #202020;
 }
-.invoice-brand-text.brand-export { font-weight: 900; }
 .invoice-type-badge {
     font-size: 13px;
     color: #94a3b8;
@@ -643,10 +539,6 @@ textarea.form-input {
     color: #202020;
     margin-bottom: 6px;
 }
-/* 전체 * 규칙(Noto Sans KR)이 안쪽 span 에 직접 적용되므로 하위 요소도 Paperologi 로 지정 */
-.company-name-bold * {
-    font-family: 'Paperologi', 'Noto Sans KR', sans-serif;
-}
 .company-info-label {
     color: #94a3b8;
 }
@@ -660,12 +552,7 @@ textarea.form-input {
 .invoice-meta-cell {
     display: table-cell;
     vertical-align: top;
-}
-/* 수신처는 남은 폭 전체 사용, 우측 견적 정보는 내용 폭 + 32px 간격 */
-.invoice-meta-cell:last-child {
-    width: 1%;
-    white-space: nowrap;
-    padding-left: 32px;
+    width: 50%;
 }
 
 .meta-label {
@@ -699,8 +586,7 @@ textarea.form-input {
 }
 .meta-info-key {
     display: inline-block;
-    min-width: 76px;
-    white-space: nowrap;
+    width: 76px;
     color: #94a3b8;
     font-size: 14px;
     margin-right: 4px;
@@ -769,10 +655,6 @@ textarea.form-input {
     vertical-align: middle;
 }
 
-/* 수출 문서: CODE 열 숨김, 품목명 열이 그 폭을 사용 */
-.invoice-table.no-code .col-code { display: none; }
-.invoice-table.no-code th.col-item { width: 52% !important; }
-
 /* Remarks/Notes Box */
 .remarks-container {
     margin-top: 40px;
@@ -814,11 +696,6 @@ textarea.form-input {
     vertical-align: middle;
     font-size: 14px;
     color: #202020;
-}
-/* 입금 계좌 정보와 지급 기한 사이 간격 */
-.banner-table th:nth-child(2),
-.banner-table td:nth-child(2) {
-    padding-left: 40px;
 }
 
 .bank-info-text {
@@ -891,14 +768,24 @@ textarea.form-input {
 /* Saved Invoice List */
 .saved-list-section {
     margin-top: 40px;
+    margin-bottom: 32px;
     padding-top: 32px;
+    padding-bottom: 32px;
     border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
 }
 .saved-list-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 0;
+    cursor: pointer;
+    user-select: none;
+}
+.saved-list-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 .saved-list-title {
     font-size: 15px;
@@ -908,6 +795,14 @@ textarea.form-input {
 .saved-list-count {
     font-size: 13px;
     color: #94a3b8;
+}
+.saved-list-toggle-icon {
+    font-size: 13px;
+    color: #499cdf;
+    font-weight: 600;
+}
+#savedListContainer {
+    margin-top: 14px;
 }
 .saved-item-card {
     display: flex;
@@ -1046,40 +941,6 @@ textarea.form-input {
     box-shadow: 0 0 0 3px rgba(73, 156, 223, 0.12);
 }
 
-/* 커스텀 옵션: 다른 옵션 상세 구성 항목 체크박스 선택 */
-.custom-pick-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 10px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background-color: #fff;
-}
-.custom-pick {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 4px 0;
-    font-size: 14px;
-    color: #202020;
-    line-height: 1.5;
-    cursor: pointer;
-}
-.custom-pick input[type="checkbox"] {
-    flex: none;
-    width: 16px;
-    height: 16px;
-    margin: 2px 0 0;
-    accent-color: #499cdf;
-    cursor: pointer;
-}
-.custom-pick-l1 { font-weight: 700; }
-.custom-pick-l1:not(:first-child) { margin-top: 8px; }
-.custom-pick-l2 { padding-left: 20px; font-weight: 600; }
-.custom-pick-l3 { padding-left: 40px; color: #475569; }
-.custom-pick-textarea { margin: 4px 0 0 24px; width: calc(100% - 24px); }
-
 /* 가격 입력 필드 스크롤 휠로 인한 값 변경 방지 — 스피너 제거 */
 .custom-price-field::-webkit-outer-spin-button,
 .custom-price-field::-webkit-inner-spin-button,
@@ -1095,6 +956,128 @@ textarea.form-input {
 .custom-field-input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
+}
+
+/* 상단 '메인으로' 링크 (허브 페이지로 이동) */
+.home-link {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+.home-link:hover { border-color: #499cdf; color: #499cdf; }
+@media screen and (max-width: 640px) {
+    .header-area { gap: 10px; }
+    .home-link { padding: 6px 10px; font-size: 12px; }
+}
+
+/* Step 1 패키지 옵션 가격 수정 박스 */
+.price-edit-box {
+    display: flex;
+    border: 1px solid #e8edf3;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+/* ── 반응형: 사운드컴퍼스와 같은 기준(1100px / 640px). 입력 화면과 상단 버튼바만 대응, 견적서 용지(.invoice-paper)는 고정 폭 유지 ── */
+@media screen and (max-width: 1100px) {
+    .app-container,
+    .global-top-bar {
+        width: auto;
+        max-width: calc(100% - 32px);
+    }
+    .app-container { width: calc(100% - 32px); }
+    /* 좁은 화면에서 견적서 용지가 왼쪽으로 잘리지 않고 가로 스크롤되도록 */
+    #invoicePreviewWrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    body { background-color: #ffffff; }
+    .app-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 20px 16px 28px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    /* 헤더 */
+    .header-area { margin-bottom: 20px; padding-bottom: 14px; }
+    .logo-title-group { gap: 8px; min-width: 0; }
+    .logo-placeholder { width: 34px; height: 34px; flex-shrink: 0; }
+    .main-title { font-size: 16px; line-height: 1.4; word-break: keep-all; }
+    .section-title { font-size: 17px; margin-bottom: 16px; gap: 8px; }
+    .section-title > span:last-child { font-size: 12px; font-weight: 500; color: #94a3b8; white-space: nowrap; }
+    .step-section > p { font-size: 13px !important; margin-bottom: 16px !important; word-break: keep-all; }
+
+    /* 저장된 문서 목록 */
+    .saved-list-section { margin-top: 0; margin-bottom: 20px; padding: 16px 0; }
+    .saved-item-card { flex-direction: column; align-items: stretch; gap: 12px; padding: 14px; }
+    .saved-item-meta { line-height: 1.5; word-break: keep-all; }
+    .saved-item-actions > button { flex: 1; padding: 10px 0 !important; }
+
+    /* Step 1: 문서 종류 / 할인 / 옵션 카드 */
+    .discount-toggle-bar { flex-wrap: wrap; gap: 8px 14px; padding: 12px 14px; }
+    .discount-toggle-desc { font-size: 12px; }
+    .option-header { padding: 14px; align-items: flex-start; gap: 10px; }
+    .option-headline-left { gap: 8px 10px; flex-wrap: wrap; min-width: 0; }
+    .option-checkbox { margin-top: 2px; }
+    .option-number { font-size: 14px; }
+    .option-product-name { font-size: 14px; line-height: 1.45; word-break: keep-all; flex-basis: 100%; }
+    .toggle-btn { flex-shrink: 0; padding: 6px 10px; }
+    .option-body { padding: 16px 14px; }
+    .desc-l2 { font-size: 14px; }
+    .desc-l3, .desc-l1 { font-size: 13px; }
+    .option-price-info,
+    .custom-price-inputs,
+    .price-edit-box { flex-direction: column; }
+    .price-info-col,
+    .price-input-col { border-right: none; border-bottom: 1px solid #e8edf3; padding: 10px 14px; }
+    .price-info-col:last-child,
+    .price-input-col:last-child { border-bottom: none; }
+    .option-qty-row,
+    .option-price-row { padding: 12px 14px; flex-wrap: wrap; }
+
+    /* Step 2: 상세 정보 입력 */
+    .form-grid { grid-template-columns: 1fr; gap: 16px; margin-bottom: 20px; }
+    .form-group.full-width { grid-column: auto; }
+    .form-input { height: 46px; }
+
+    /* iOS 입력칸 포커스 시 자동 확대 방지 (16px 미만이면 확대됨) */
+    .form-input,
+    .custom-field-input,
+    .custom-field-textarea,
+    .custom-price-field,
+    .option-price-input,
+    .option-qty-input { font-size: 16px; }
+
+    /* 하단 이전/다음 버튼 */
+    .action-footer { gap: 10px; margin-top: 28px; padding-top: 18px; }
+    .action-footer > button { flex: 1; padding: 14px 10px; }
+
+    /* 결과 화면 상단 버튼바 (견적서 용지는 그대로) */
+    .global-top-bar {
+        max-width: calc(100% - 24px);
+        margin-top: 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+    }
+    .global-top-bar > span { font-size: 13px; line-height: 1.5; text-align: center; word-break: keep-all; }
+    .global-top-bar > div { flex-wrap: wrap; }
+    .global-top-bar > div > button { flex: 1; padding: 10px 8px !important; white-space: nowrap; }
 }
 
 @media print {

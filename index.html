@@ -1,260 +1,154 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>사운드컴퍼스 견적서</title>
-    <link rel="stylesheet" href="style.css">
+    <title>아이해브 견적서 시스템</title>
+    <style>
+        /* 제목·설명용 Paperlogy 웹폰트 (사운드컴퍼스 견적서와 같은 CDN) */
+        @font-face {
+            font-family: 'Paperologi';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Paperologi';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            /* 사운드컴퍼스 로고 그라데이션: 브랜드 파랑 → 청록 */
+            background: linear-gradient(135deg, #499cdf 0%, #4fd1c5 100%) fixed;
+            color: #202020;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .hub {
+            width: 100%;
+            max-width: 720px;
+        }
+        .hub-header {
+            margin-bottom: 56px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .hub-title {
+            margin: 0 0 18px;
+            font-family: 'Paperologi', 'Noto Sans KR', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+        }
+        /* 제목 2줄: 회사명(작게) / 견적서 시스템(크게) — * 규칙보다 우선하도록 span 에도 폰트 지정 */
+        .hub-title span {
+            display: block;
+            font-family: 'Paperologi', 'Noto Sans KR', sans-serif;
+        }
+        .hub-title-company {
+            margin-bottom: 6px;
+            font-size: 24px;
+            opacity: 0.92;
+        }
+        .hub-title-main {
+            font-size: 56px;
+            letter-spacing: -1px;
+        }
+        .hub-desc {
+            margin: 0;
+            font-family: 'Paperologi', 'Noto Sans KR', sans-serif;
+            font-size: 17px;
+            font-weight: 400;
+            opacity: 0.92;
+        }
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+        .hub-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 36px 20px;
+            border-radius: 14px;
+            background-color: #ffffff;
+            color: #202020;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(15, 60, 100, 0.15);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .hub-card:hover,
+        .hub-card:focus-visible {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px rgba(15, 60, 100, 0.22);
+            outline: none;
+        }
+        .hub-card img {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+        }
+        .hub-card-text { text-align: center; }
+        .hub-card-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .hub-card-sub {
+            font-size: 13px;
+            color: #64748b;
+        }
+        @media screen and (max-width: 640px) {
+            body { padding: 96px 16px 48px; align-items: flex-start; }
+            .hub-header { margin-bottom: 56px; }
+            .hub-title { margin-bottom: 14px; word-break: keep-all; }
+            .hub-title-company { font-size: 18px; }
+            .hub-title-main { font-size: 40px; }
+            .hub-desc { font-size: 15px; word-break: keep-all; }
+            .hub-grid { grid-template-columns: 1fr; gap: 12px; }
+            .hub-card { flex-direction: row; justify-content: flex-start; padding: 18px; gap: 16px; }
+            .hub-card img { width: 52px; height: 52px; }
+            .hub-card-text { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+        }
+    </style>
 </head>
 <body>
-
-    <!-- App Flow Workspace Container -->
-    <div class="app-container" id="workspaceContainer">
-
-        <!-- Header Area Shared -->
-        <div class="header-area">
-            <div class="logo-title-group">
-                <div class="logo-placeholder"><img src="logo-soundlocalization.png" alt="사운드컴퍼스 로고" style="width:80%;height:80%;margin-top:6px;object-fit:contain;border-radius:8px;"></div>
-                <div class="main-title">(주)아이해브 사운드컴퍼스 견적서 양식 시스템</div>
-            </div>
+    <main class="hub">
+        <header class="hub-header">
+            <h1 class="hub-title">
+                <span class="hub-title-company">(주)아이해브</span>
+                <span class="hub-title-main">견적서 시스템</span>
+            </h1>
+            <p class="hub-desc">견적서를 작성할 서비스를 선택해 주세요.</p>
+        </header>
+        <div class="hub-grid">
+            <a class="hub-card" href="soundcompass/index.html">
+                <img src="soundcompass/logo-soundlocalization.png" alt="">
+                <div class="hub-card-text">
+                    <div class="hub-card-name">사운드컴퍼스</div>
+                    <div class="hub-card-sub">소리방향성시스템 견적서</div>
+                </div>
+            </a>
+            <a class="hub-card" href="speechear/index.html">
+                <img src="speechear/logo_256.png" alt="">
+                <div class="hub-card-text">
+                    <div class="hub-card-name">말귀</div>
+                    <div class="hub-card-sub">말귀 견적서</div>
+                </div>
+            </a>
         </div>
-
-        <!-- STEP 1: Main Target Select -->
-        <div id="step1" class="step-section active">
-            <div class="section-title">구분 선택 <span>Step 1 of 3</span></div>
-            <p style="color: #64748b; font-size: 14px; margin-bottom: 30px;">견적서를 발급할 대상의 성격에 맞춰 버튼을 선택해 주세요.</p>
-            <div class="type-btn-container">
-                <button type="button" class="type-btn" onclick="selectType('center')">국내용</button>
-                <button type="button" class="type-btn" onclick="selectType('export')">수출용</button>
-            </div>
-
-            <div id="savedListSection" class="saved-list-section" style="display:none;">
-                <div class="saved-list-header">
-                    <span class="saved-list-title">저장된 견적서</span>
-                    <span class="saved-list-count" id="savedListCount"></span>
-                </div>
-                <div id="savedListContainer"></div>
-            </div>
-        </div>
-
-        <!-- STEP 2: Option List Grid -->
-        <div id="step2" class="step-section">
-            <div class="section-title"><span id="typeTitleText">옵션 선택</span> <span>Step 2 of 3</span></div>
-            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;" id="step2Desc">제공 품목 중 견적서에 포함할 옵션 1개를 선택하고 상세 구성을 확인해 주세요.</p>
-
-            <!-- 국내용 문서 종류 (수출용은 Step 3 의 docSettingsBar 사용) -->
-            <div class="doc-type-ko-bar" id="docTypeKoBar" style="display:none;">
-                <span class="form-label">문서 종류</span>
-                <label class="doc-type-radio">
-                    <input type="radio" name="docTypeKo" value="quotation" checked onchange="onDocTypeKoChange(this.value)">
-                    <span>견적서</span>
-                </label>
-                <label class="doc-type-radio">
-                    <input type="radio" name="docTypeKo" value="statement" onchange="onDocTypeKoChange(this.value)">
-                    <span>거래명세서</span>
-                </label>
-            </div>
-
-            <div class="discount-toggle-bar">
-                <label class="discount-toggle-label">
-                    <input type="checkbox" id="discountToggle" onchange="toggleDiscount()">
-                    <span>안내용 할인가 적용</span>
-                </label>
-                <span class="discount-toggle-desc" id="discountToggleDesc">체크 시 할인율과 할인가가 견적서에 표시됩니다</span>
-            </div>
-
-            <div class="options-grid" id="optionsContainer">
-                <!-- Javascript will insert options dynamically here -->
-            </div>
-
-            <div class="action-footer">
-                <button type="button" class="btn-secondary" onclick="goStep(1)">이전으로</button>
-                <button type="button" class="btn-primary" onclick="validateAndGoStep3()">다음 단계로</button>
-            </div>
-        </div>
-
-        <!-- STEP 3: Metadata and Values Inputs -->
-        <div id="step3" class="step-section">
-            <div class="section-title">상세 정보 입력 <span>Step 3 of 3</span></div>
-            <p style="color: #64748b; font-size: 14px; margin-bottom: 24px;">고객 정보 및 금액 정보를 입력해 주세요. 세액과 총 합계 금액은 공급가액 입력 시 실시간 자동 계산됩니다.</p>
-
-            <div class="doc-settings-bar" id="docSettingsBar" style="display:none;">
-                <div class="form-group">
-                    <label class="form-label">문서 종류</label>
-                    <select id="inputDocType" class="form-input" onchange="onDocSettingsChange()">
-                        <option value="quotation">Quotation (견적서)</option>
-                        <option value="invoice">Invoice (청구서)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">통화</label>
-                    <select id="inputCurrency" class="form-input" onchange="onDocSettingsChange()">
-                        <option value="KRW">KRW (원)</option>
-                        <option value="USD">USD (달러)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="item-order-section">
-                <div class="item-order-title">품목 순서 <span id="itemOrderDesc">▲▼ 버튼으로 견적서에 표시될 순서를 바꿀 수 있습니다.</span></div>
-                <div id="itemOrderList"></div>
-            </div>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">고객명 (기관/병원명)</label>
-                    <input type="text" id="inputClientName" class="form-input" placeholder="예: 미래청각재활센터">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">담당자명</label>
-                    <input type="text" id="inputManagerName" class="form-input" placeholder="예: 홍길동 팀장">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" id="labelDate">견적일자</label>
-                    <input type="date" id="inputDate" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">총 공급가액 (Step 2 합산, 자동계산)</label>
-                    <input type="text" id="inputSupplyPrice" class="form-input" disabled value="0">
-                </div>
-                <div class="form-group" id="taxPriceGroup">
-                    <label class="form-label">총 세액 (부가세 10% - 자동계산)</label>
-                    <input type="text" id="inputTaxPrice" class="form-input" disabled value="0">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" id="labelTotalPrice">총 견적금액 (합계 - 자동계산)</label>
-                    <input type="text" id="inputTotalPrice" class="form-input" disabled value="0">
-                </div>
-                <div class="form-group full-width">
-                    <label class="form-label">비고 (특이사항)</label>
-                    <textarea id="inputRemarks" class="form-input" placeholder="견적서 하단 비고란에 기재될 내용을 입력하세요."></textarea>
-                </div>
-            </div>
-
-            <div class="action-footer">
-                <button type="button" class="btn-secondary" onclick="goStep(2)">이전으로</button>
-                <button type="button" class="btn-primary" onclick="generateInvoice()" id="btnGenerate">견적서 최종 생성</button>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- STEP 4 View wrapper: Only visible after generation -->
-    <div id="invoicePreviewWrapper" style="display: none; margin-bottom: 60px;">
-
-        <div class="global-top-bar">
-            <span id="generatedNotice">🎉 견적서 문서 생성이 완료되었습니다. 아래 인쇄 버튼을 누르거나 Ctrl+P로 저장 가능합니다.</span>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-secondary" style="padding:6px 14px; font-size:13px; border:none;" onclick="resetSystem()">새로 만들기</button>                <button class="btn-primary" style="padding:6px 14px; font-size:13px; background-color:#499cdf;" onclick="printInvoice()">인쇄 / PDF 저장</button>
-                <button class="btn-primary" style="padding:6px 14px; font-size:13px; background-color:#16a34a;" onclick="saveInvoice()">저장하기</button>
-            </div>
-        </div>
-
-        <!-- Premium Invoice Structure Sheet -->
-        <div class="invoice-paper">
-
-            <!-- Main Content Top Area -->
-            <div class="invoice-main-content">
-
-                <!-- Table Layout Header -->
-                <div class="invoice-header-grid">
-                    <div class="invoice-header-cell">
-                        <div class="invoice-logo-title">
-                            <img class="invoice-logo-icon" src="logo-soundlocalization.png" alt="아이해브 로고">
-                            <span class="invoice-brand-text" data-i18n="brand">사운드컴퍼스 견적서</span>
-                        </div>
-                    </div>
-                    <div class="invoice-header-cell text-right">
-                        <div class="company-info-block">
-                            <div class="company-name-bold"><span data-i18n="companyName">(주)아이해브</span></div>
-                            <div data-i18n="address"><span class="company-info-label">주소 :</span> 경기 안양시 동안구 흥안대로 457-25 605호</div>
-                            <div data-i18n="phone"><span class="company-info-label">전화번호 :</span> 031-496-8330</div>
-                            <div data-i18n="cell"></div>
-                            <div data-i18n="email"><span class="company-info-label">이메일 :</span> support@ihab.co.kr</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Client and Meta List Row -->
-                <div class="invoice-meta-grid">
-                    <div class="invoice-meta-cell">
-                        <div class="meta-label" data-i18n="recipient">견적 수신처</div>
-                        <div class="meta-value-client" id="pdfClientName">-</div>
-                        <div class="meta-value-sub" id="pdfManagerName">담당자: -</div>
-                    </div>
-                    <div class="invoice-meta-cell">
-                        <ul class="meta-info-list">
-                            <li class="meta-info-item"><span class="meta-info-key" data-i18n="numberKey">견적 번호:</span> <span id="pdfInvoiceNumber">-</span></li>
-                            <li class="meta-info-item"><span class="meta-info-key" data-i18n="dateKey">견적 일자:</span> <span id="pdfDate">-</span></li>
-                            <li class="meta-info-item" id="pdfValidityRow"><span class="meta-info-key" data-i18n="validityKey">유효 기한:</span> <span data-i18n="validityVal">발급일로부터 30일</span></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Table Line Items -->
-                <table class="invoice-table" id="invoiceTable">
-                    <thead>
-                        <tr>
-                            <th class="col-code" style="width: 8%;" data-i18n="thCode">코드</th>
-                            <th class="col-item" style="width: 44%;" data-i18n="thItem">품목명 및 상세 구성</th>
-                            <th class="text-right" style="width: 7%;" data-i18n="thQty">수량</th>
-                            <th class="text-right" style="width: 18%;" data-i18n="thUnit">단가 (공급가액)</th>
-                            <th class="text-right" style="width: 23%;" data-i18n="thAmount">합계금액 (VAT 포함)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invoiceTableBody">
-                    </tbody>
-                </table>
-
-                <!-- Remarks Box -->
-                <div class="remarks-container">
-                    <div class="remarks-title" data-i18n="remarksTitle">비고 및 특이사항</div>
-                    <div class="remarks-content" id="pdfRemarks">-</div>
-                </div>
-
-            </div>
-
-            <!-- Bottom Accent Layout Banner -->
-            <div class="invoice-bottom-banner">
-                <table class="banner-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 40%;" class="banner-bank-col" data-i18n="bankTitle">입금 계좌 안내</th>
-                            <th style="width: 25%;" class="banner-due-col" data-i18n="dueTitle">지급 기한</th>
-                            <th class="text-right" style="width: 35%;" data-i18n="totalTitle">총 견적 금액 (합계)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="banner-bank-col">
-                                <div class="bank-info-text" data-i18n="bankInfo">
-                                    신한은행 140-014-875639<br>
-                                    예금주: (주)아이해브
-                                </div>
-                            </td>
-                            <td class="banner-due-col">
-                                <div class="due-date-text" id="pdfDueDateBanner">-</div>
-                            </td>
-                            <td class="text-right">
-                                <div class="grand-total-text" id="pdfGrandTotalBanner">0원</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- Stamp Signature Block Row -->
-                <div class="footer-sign-row">
-                    <div class="thank-you-msg" data-i18n="thanks">귀사의 무궁한 발전을 기원합니다. 감사합니다.</div>
-                    <div class="seal-wrapper">
-                        <span data-i18n="sealLabel">(주)아이해브 대표이사</span>
-                        <img class="seal-box" src="corp-stamp.png" alt="아이해브 직인">
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    </main>
 </body>
 </html>

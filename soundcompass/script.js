@@ -494,7 +494,7 @@ function renderOptions() {
                     <div class="composition-title">상세 품목 구성</div>
                     <div class="composition-text">${item.desc}</div>
                     <div class="composition-title" style="margin-top:20px; padding-top:16px; border-top:1px dashed #e2e8f0;">가격 수정</div>
-                    <div style="display:flex; border:1px solid #e8edf3; border-radius:6px; overflow:hidden; margin-top:6px;">
+                    <div class="price-edit-box">
                         <div class="price-input-col">
                             <div class="price-info-label">공개용 기준가</div>
                             <div class="custom-price-input-wrap">
